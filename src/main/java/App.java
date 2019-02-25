@@ -1,7 +1,9 @@
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /*
@@ -12,20 +14,33 @@ public class App extends Application {
         launch(args);
     }
 
-
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("PathFinder Assistant");
 
+        // Create character button
         Button createCharacterButton = new Button();
         createCharacterButton.setDefaultButton(true);
         createCharacterButton.setText("Create Character");
         createCharacterButton.setOnAction(event -> System.out.println("Create character button pressed."));
 
-        StackPane rootView = new StackPane();
+        // Load character button
+        Button loadCharacterButton = new Button();
+        loadCharacterButton.setText("Load Character");
+        loadCharacterButton.setOnAction(event -> System.out.println("Load character button pressed"));
+
+        // Quit button
+        Button quitButton = new Button();
+        quitButton.setText("Quit");
+        quitButton.setOnAction(event -> primaryStage.close());
+
+        VBox rootView = new VBox();
 
         rootView.getChildren().add(createCharacterButton);
+        rootView.getChildren().add(loadCharacterButton);
+        rootView.getChildren().add(quitButton);
+        rootView.setAlignment(Pos.CENTER);
+        rootView.setSpacing(25);
         primaryStage.setScene(new Scene(rootView, 200, 200));
 
         primaryStage.show();
