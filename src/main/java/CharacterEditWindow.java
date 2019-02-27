@@ -117,8 +117,8 @@ public class CharacterEditWindow {
         layout.getChildren().add(overallVBox);
 
         stage = new Stage();
-        stage.setTitle(playerCharacter.getName());
-        stage.setScene(new Scene(layout, 200, 200));
+        stage.setTitle(playerCharacter.getName().isEmpty() ?  playerCharacter.getName() : "Create a Character");
+        stage.setScene(new Scene(layout));
 
         stage.show();
     }
