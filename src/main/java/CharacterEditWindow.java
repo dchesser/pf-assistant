@@ -7,11 +7,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import network.cardboard.crystallogic.AbilityScores;
 import network.cardboard.crystallogic.PlayerCharacter;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 
 /**
  * This class is used for displaying the window that is used to edit characters.
@@ -53,7 +52,16 @@ public class CharacterEditWindow {
          */
 
         saveLocation = characterSaveFile;
-        createWindow(); // This goes at the end, as it requires playerCharacter to have a name
+
+        try {
+            playerCharacter = parseSaveFile();
+
+            createWindow(); // This goes at the end, as it requires playerCharacter to have a name
+        } catch (FileNotFoundException e) {
+            System.out.println("The file was not found, or was not readable.  There may have also been a parsing error.  Not really sure.");
+            System.out.println("Here, have the stack trace, maybe you can figure it out...");
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -94,19 +102,20 @@ public class CharacterEditWindow {
     }
 
     /**
+     * @TODO This method is missing the parse to JSON function, and requires the playerCharacter.toString to get its JSON!
      * This method is used to save the currently open character.
      * It will, by default, remember where you last saved, or loaded from,
      * and save to that location.
      */
     private void saveCharacter() {
 
-        // Check the location of the default save directory
+        // Check the existence of the default save directory
         File saveDirectory = new File("saves");
         if(!saveDirectory.exists()) {
             saveDirectory.mkdir();
         }
 
-
+        // If there isn't a defined saveLocation, get one.
         if(saveLocation == null) {
             FileChooser folderSelector = new FileChooser();
             folderSelector.setTitle("Select Save Location");
@@ -144,5 +153,38 @@ public class CharacterEditWindow {
         PlayerCharacter characterForSave = new PlayerCharacter(nameField.getText(), playerCharacter.abilityScores);
 
         return characterForSave;
+    }
+
+    /**
+     * @TODO This method is extremely simple as is, and requires the json parser touch-up that we will be doing.
+     * This is only to be called if you are loading a character from saveLocation
+     * @return the character that was saved in saveLocation
+     */
+    private PlayerCharacter parseSaveFile() throws FileNotFoundException {
+
+        try {
+            FileReader fr = new FileReader(saveLocation);
+            BufferedReader br = new BufferedReader(fr);
+
+            String contents = br.readLine();
+
+            String name = contents.substring(9);
+
+            name = name.substring(0, name.indexOf("\""));
+
+            // As i'm not worried about AbilityScores atm, i'm going to create a new one for the character.
+            // It wasn't part of this sprint at the beginning, and i'm not sure why it was added later on.
+
+            PlayerCharacter characterFromLoad = new PlayerCharacter(name, AbilityScores.BuildMethod.CLASSICAL);
+
+            return characterFromLoad;
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+
+        throw new FileNotFoundException();
     }
 }
