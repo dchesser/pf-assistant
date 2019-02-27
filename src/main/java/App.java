@@ -47,9 +47,24 @@ public class App extends Application {
         loadCharacterButton.setOnAction(event -> {
             System.out.println("Load Character Button Pressed");
 
-            File saveFile = fileChooser.showOpenDialog(primaryStage);
-            if (saveFile != null) {
-                characterWindow(saveFile);
+            // if the default save directory doesn't exist, make it.
+            File saveDirectory = new File("saves");
+            if(!saveDirectory.exists()) {
+                saveDirectory.mkdir();
+            }
+
+            FileChooser saveSelector = new FileChooser();
+            saveSelector.setTitle("Select Your Save");
+            File defaultDirectory = new File("saves" + File.separator);
+            saveSelector.setInitialDirectory(defaultDirectory);
+            saveSelector.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json")
+            );
+
+            File saveLocation = saveSelector.showOpenDialog(primaryStage);
+
+            if (saveLocation != null) {
+                CharacterEditWindow existingCharacterEditWindow = new CharacterEditWindow(saveLocation);
             }
         });
 
