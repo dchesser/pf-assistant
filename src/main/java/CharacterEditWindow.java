@@ -1,3 +1,5 @@
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -90,6 +92,11 @@ public class CharacterEditWindow {
             /* Inside this, we need to have it output the file of the playerCharacter */
             saveCharacter();
         });
+        
+        nameHBox.setSpacing(15);
+        overallVBox.setSpacing(15);
+        overallVBox.setPadding(new Insets(10));
+        overallVBox.setAlignment(Pos.TOP_LEFT);
 
         Button saveCharacterAsButton = new Button();
         saveCharacterAsButton.setText("Save As");
