@@ -93,9 +93,10 @@ public class CharacterEditWindow {
             saveCharacter();
         });
         
-        nameHBox.setSpacing(15);
-        overallVBox.setSpacing(15);
-        overallVBox.setPadding(new Insets(10));
+        nameHBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+        overallVBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+        saveHBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+        overallVBox.setPadding(new Insets(ApplicationConfig.DEFAULT_PADDING));
         overallVBox.setAlignment(Pos.TOP_LEFT);
 
         Button saveCharacterAsButton = new Button();
