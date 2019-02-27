@@ -80,6 +80,8 @@ public class CharacterEditWindow {
         nameHBox.getChildren().add(nameLabel);
         nameHBox.getChildren().add(nameField);
 
+        HBox saveHBox = new HBox();
+
         Button saveCharacterButton = new Button();
         saveCharacterButton.setText("Save Character");
         saveCharacterButton.setOnAction(event -> {
@@ -89,14 +91,26 @@ public class CharacterEditWindow {
             saveCharacter();
         });
 
+        Button saveCharacterAsButton = new Button();
+        saveCharacterAsButton.setText("Save As");
+        saveCharacterAsButton.setOnAction(event -> {
+
+            System.out.println("Save As Button Pressed");
+
+            saveCharacterAs();
+        });
+
+        saveHBox.getChildren().add(saveCharacterButton);
+        saveHBox.getChildren().add(saveCharacterAsButton);
+
         overallVBox.getChildren().add(nameHBox);
-        overallVBox.getChildren().add(saveCharacterButton);
+        overallVBox.getChildren().add(saveHBox);
 
         layout.getChildren().add(overallVBox);
 
         stage = new Stage();
         stage.setTitle(playerCharacter.getName());
-        stage.setScene(new Scene(layout, 450, 450));
+        stage.setScene(new Scene(layout, 200, 200));
 
         stage.show();
     }
@@ -117,20 +131,52 @@ public class CharacterEditWindow {
 
         // If there isn't a defined saveLocation, get one.
         if(saveLocation == null) {
-            FileChooser folderSelector = new FileChooser();
-            folderSelector.setTitle("Select Save Location");
-            File defaultDirectory = new File("saves" + File.separator);
-            folderSelector.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("JSON files (*.json)","*.json")
-            );
-            folderSelector.setInitialDirectory(defaultDirectory);
-
-            saveLocation = folderSelector.showSaveDialog(stage);
+            updateSaveLocation();
         }
 
         // Now just save to save Location
-        try{
+        saveFile();
+    }
 
+    /**
+     * @TODO This method is missing the parse to JSON function, and requires the playerCharacter.toString to get its JSON!
+     * This method is used to save the currently open character under a name that you specify.
+     */
+    private void saveCharacterAs() {
+
+        // Check the existence of the default save directory
+        File saveDirectory = new File("saves");
+        if(!saveDirectory.exists()) {
+            saveDirectory.mkdir();
+        }
+
+        updateSaveLocation();
+
+        // Now just save to save Location
+        saveFile();
+    }
+
+    /**
+     * This method is used to update the saveLocation for use in SaveAs as well as first time Saves
+     */
+    private void updateSaveLocation() {
+        FileChooser folderSelector = new FileChooser();
+        folderSelector.setTitle("Select Save Location");
+        File defaultDirectory = new File("saves" + File.separator);
+        folderSelector.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("JSON files (*.json)","*.json")
+        );
+        folderSelector.setInitialDirectory(defaultDirectory);
+
+        saveLocation = folderSelector.showSaveDialog(stage);
+    }
+
+    /**
+     * This method will save the character to the save location
+     * @TODO Probably need better naming for methods
+     */
+    private void saveFile() {
+        try{
             playerCharacter = updateCharacterForSave();
 
             PrintWriter pw = new PrintWriter(saveLocation);
