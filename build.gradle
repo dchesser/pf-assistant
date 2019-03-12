@@ -20,6 +20,7 @@ mainClassName = 'App'
 dependencies {
     // Use JUnit test framework
     testCompile 'junit:junit:4.12'
+    compile 'net.sourceforge.argo:argo:5.5'
 }
 
 // In this section you declare where to find the dependencies of your project
