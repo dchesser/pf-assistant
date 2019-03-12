@@ -29,12 +29,12 @@ public class AbilityScores
 
     public AbilityScores()
     {
-        this.strength = new AbilityScore(0);
-        this.dexterity = new AbilityScore(0);
-        this.constitution = new AbilityScore(0);
-        this.intelligence = new AbilityScore(0);
-        this.wisdom = new AbilityScore(0);
-        this.charisma = new AbilityScore(0);
+        this.strength = new AbilityScore(1);
+        this.dexterity = new AbilityScore(1);
+        this.constitution = new AbilityScore(1);
+        this.intelligence = new AbilityScore(1);
+        this.wisdom = new AbilityScore(1);
+        this.charisma = new AbilityScore(1);
     }
 
     public AbilityScores(BuildMethod method)
