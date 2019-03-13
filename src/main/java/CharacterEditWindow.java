@@ -1,3 +1,8 @@
+import argo.format.JsonFormatter;
+import argo.format.PrettyJsonFormatter;
+import argo.jdom.JsonNode;
+import argo.jdom.JsonNodeBuilder;
+import argo.saj.InvalidSyntaxException;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,6 +18,8 @@ import network.cardboard.crystallogic.AbilityScores;
 import network.cardboard.crystallogic.PlayerCharacter;
 
 import java.io.*;
+
+import static argo.jdom.JsonNodeBuilders.*;
 
 /**
  * This class is used for displaying the window that is used to edit characters.
@@ -188,6 +195,8 @@ public class CharacterEditWindow {
             playerCharacter = updateCharacterForSave();
 
             PrintWriter pw = new PrintWriter(saveLocation);
+
+            // The JSON file is created in the Character object's toString
             pw.print(playerCharacter.toString());
             pw.close();
 
@@ -220,16 +229,15 @@ public class CharacterEditWindow {
             FileReader fr = new FileReader(saveLocation);
             BufferedReader br = new BufferedReader(fr);
 
-            String contents = br.readLine();
+            String contents = "";
 
-            String name = contents.substring(9);
+            String line;
+            while((line = br.readLine()) != null) {
+                contents += line;
+            }
 
-            name = name.substring(0, name.indexOf("\""));
-
-            // As i'm not worried about AbilityScores atm, i'm going to create a new one for the character.
-            // It wasn't part of this sprint at the beginning, and i'm not sure why it was added later on.
-
-            PlayerCharacter characterFromLoad = new PlayerCharacter(name, AbilityScores.BuildMethod.CLASSICAL);
+            // The PlayerCharacter class will return a new instance of itself after parsing the JSON file
+            PlayerCharacter characterFromLoad = PlayerCharacter.parseJSON(contents);
 
             return characterFromLoad;
 
@@ -237,6 +245,8 @@ public class CharacterEditWindow {
             e.printStackTrace();
         } catch (IOException i) {
             i.printStackTrace();
+        } catch (InvalidSyntaxException s) {
+            s.printStackTrace();
         }
 
         throw new FileNotFoundException();
