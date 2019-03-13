@@ -149,8 +149,12 @@ public class CharacterEditWindow {
             updateSaveLocation();
         }
 
-        // Now just save to save Location
-        saveFile();
+        if(saveLocation != null) {
+            // Now just save to save Location
+            saveFile();
+        } else {
+            System.out.println("Cancel Save Successful.");
+        }
     }
 
     /**
@@ -167,8 +171,12 @@ public class CharacterEditWindow {
 
         updateSaveLocation();
 
-        // Now just save to save Location
-        saveFile();
+        if(saveLocation != null) {
+            // Now just save to save Location
+            saveFile();
+        } else {
+            System.out.println("Cancel Save Successful.");
+        }
     }
 
     /**
@@ -183,7 +191,14 @@ public class CharacterEditWindow {
         );
         folderSelector.setInitialDirectory(defaultDirectory);
 
-        saveLocation = folderSelector.showSaveDialog(stage);
+        File tempSaveLocation = folderSelector.showSaveDialog(stage);
+
+        if(tempSaveLocation != null) {
+            saveLocation = tempSaveLocation;
+        } else {
+            System.out.println("Save Canceled.");
+        }
+
     }
 
     /**
