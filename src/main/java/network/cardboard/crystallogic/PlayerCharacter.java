@@ -8,8 +8,10 @@ import argo.jdom.JsonNodeBuilder;
 import argo.saj.InvalidSyntaxException;
 import network.cardboard.crystallogic.AbilityScores.BuildMethod;
 
-import static argo.jdom.JsonNodeBuilders.*;
+
 import static argo.jdom.JsonNodeBuilders.aNumberBuilder;
+import static argo.jdom.JsonNodeBuilders.aStringBuilder;
+import static argo.jdom.JsonNodeBuilders.anObjectBuilder;
 
 /**
  * Player Characters (or "PCs") are the very essence of Pathfinder or
@@ -24,10 +26,18 @@ public class PlayerCharacter
     private String name;
     public AbilityScores abilityScores;
 
-    public PlayerCharacter(String name)
+    public PlayerCharacter(String contents, boolean isJson)
     {
-        this.name = name;
-        this.abilityScores = new AbilityScores(10);
+        if(isJson) {
+            try {
+                parseJSON(contents);
+            } catch (InvalidSyntaxException e) {
+                e.printStackTrace();
+            }
+        } else {
+            name = contents;
+            this.abilityScores = new AbilityScores(10);
+        }
     }
 
     public PlayerCharacter(String name, BuildMethod rolls)
@@ -42,15 +52,13 @@ public class PlayerCharacter
         this.abilityScores = abilityScores;
     }
 
-    public static PlayerCharacter parseJSON(String json) throws InvalidSyntaxException
+    public void parseJSON(String json) throws InvalidSyntaxException
     {
-        PlayerCharacter pc;
-
         JdomParser parser = new JdomParser();
 
         JsonNode node = parser.parse(json);
 
-        String newName = node.getStringValue("name");
+        name  = node.getStringValue("name");
         int s= Integer.parseInt(node.getNode("abilityScores").getNumberValue("STR"));
         int d = Integer.parseInt(node.getNode("abilityScores").getNumberValue("DEX"));
         int con = Integer.parseInt(node.getNode("abilityScores").getNumberValue("CON"));
@@ -58,8 +66,7 @@ public class PlayerCharacter
         int w = Integer.parseInt(node.getNode("abilityScores").getNumberValue("WIS"));
         int c = Integer.parseInt(node.getNode("abilityScores").getNumberValue("CHA"));
 
-        pc = new PlayerCharacter(newName, new AbilityScores(s, d, con, i, w, c));
-        return pc;
+        abilityScores = new AbilityScores(s, d, con, i, w, c);
     }
 
     public String getName()

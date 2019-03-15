@@ -1,13 +1,9 @@
-import argo.format.JsonFormatter;
-import argo.format.PrettyJsonFormatter;
-import argo.jdom.JsonNode;
-import argo.jdom.JsonNodeBuilder;
-import argo.saj.InvalidSyntaxException;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -17,34 +13,45 @@ import javafx.stage.Stage;
 import network.cardboard.crystallogic.AbilityScores;
 import network.cardboard.crystallogic.PlayerCharacter;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
-import static argo.jdom.JsonNodeBuilders.*;
 
 /**
  * This class is used for displaying the window that is used to edit characters.
  * It will take a file and load an existing character from it,
  * Or it will create a new character if given nothing (for use with NewCharacter button in main menu)
  *
- * @author William
- * @version 0.1
- * @since 02-26-2019
+ * @author William Bullock
+ * @version 0.2
+ * @since 03-14-2019
  */
 public class CharacterEditWindow {
 
-    PlayerCharacter playerCharacter;
-    File saveLocation;
+    private PlayerCharacter playerCharacter;
+    private File saveLocation;
 
     // Window Objects
-    Stage stage;
-    TextField nameField;
+    private Stage stage;
+
+    // Character Stats and Values
+    private TextField nameField;
+
+    // Ability Score fields.
+    private Map<String, Spinner<Integer>> abilityScoresSpinners = new HashMap<>();
 
     /**
      * This method is the default constructor, which will assume that you are making a new character.
      */
     public CharacterEditWindow()
     {
-        playerCharacter = new PlayerCharacter("New Character");
+        playerCharacter = new PlayerCharacter("New Character", false);
 
         createWindow(); // This goes at the end, as it requires playerCharacter to have a name
     }
@@ -56,21 +63,25 @@ public class CharacterEditWindow {
      */
     public CharacterEditWindow(File characterSaveFile) {
 
-        /*
-        Handle the character save file in here, and create the window as normal.
-         */
+        // Handle the character save file in here, and create the window as normal.
 
         saveLocation = characterSaveFile;
 
-        try {
-            playerCharacter = parseSaveFile();
+        parseSaveFile();
+        createWindow(); // This goes at the end, as it requires playerCharacter to have a name
+    }
 
-            createWindow(); // This goes at the end, as it requires playerCharacter to have a name
-        } catch (FileNotFoundException e) {
-            System.out.println("The file was not found, or was not readable.  There may have also been a parsing error.  Not really sure.");
-            System.out.println("Here, have the stack trace, maybe you can figure it out...");
-            e.printStackTrace();
-        }
+    /**
+     * Method: Character Edit Window
+     *
+     * This constructor is meant to accept newly generated player characters that come from
+     * the AbilityScore selection process.  It will generate the window off of the accepted Data.
+     * @param pc The Generated Player Character
+     */
+    public CharacterEditWindow(PlayerCharacter pc) {
+        playerCharacter = pc;
+
+        createWindow();
     }
 
     /**
@@ -78,47 +89,128 @@ public class CharacterEditWindow {
      * It was created so that there would be less repeated code within this class.
      */
     private void createWindow() {
-        StackPane layout = new StackPane();
 
+        // Layout creation:
+        StackPane layout = new StackPane();
         VBox overallVBox = new VBox();
 
+
+        // Name Stuff Prepared and Combined
         HBox nameHBox = new HBox();
+
         Label nameLabel = new Label("Name:");
         nameField = new TextField(playerCharacter.getName());
 
         nameHBox.getChildren().add(nameLabel);
         nameHBox.getChildren().add(nameField);
 
+        // S p a c i n g
+        nameHBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+
+
+        // Ability Scores display Creation, Preparation, and Combination.
+
+        // Layout of Section
+        HBox abilityScoresHBox = new HBox();
+        VBox strIntScoresVBox = new VBox();
+        VBox dexWisScoresVBox = new VBox();
+        VBox conChaScoresVBox = new VBox();
+
+        // Create the Ability Score fields and fill them (max 100 for now)
+        abilityScoresSpinners.put("str", new Spinner<>(1,100, playerCharacter.abilityScores.strength.getValue()));
+        abilityScoresSpinners.put("dex", new Spinner<>(1,100, playerCharacter.abilityScores.dexterity.getValue()));
+        abilityScoresSpinners.put("con", new Spinner<>(1,100, playerCharacter.abilityScores.constitution.getValue()));
+        abilityScoresSpinners.put("int", new Spinner<>(1,100, playerCharacter.abilityScores.intelligence.getValue()));
+        abilityScoresSpinners.put("wis", new Spinner<>(1,100, playerCharacter.abilityScores.wisdom.getValue()));
+        abilityScoresSpinners.put("cha", new Spinner<>(1,100, playerCharacter.abilityScores.charisma.getValue()));
+
+        // Create Labels for Each
+        Label strLabel = new Label("STR:");
+        Label dexLabel = new Label("DEX:");
+        Label conLabel = new Label("CON:");
+        Label intLabel = new Label("INT:");
+        Label wisLabel = new Label("WIS:");
+        Label chaLabel = new Label("CHA:");
+
+        // create minor pairs for each ability score
+        //str
+        HBox strHBox = new HBox();
+        strHBox.getChildren().add(strLabel);
+        strHBox.getChildren().add(abilityScoresSpinners.get("str"));
+        //dex
+        HBox dexHBox = new HBox();
+        dexHBox.getChildren().add(dexLabel);
+        dexHBox.getChildren().add(abilityScoresSpinners.get("dex"));
+        //con
+        HBox conHBox = new HBox();
+        conHBox.getChildren().add(conLabel);
+        conHBox.getChildren().add(abilityScoresSpinners.get("con"));
+        //int
+        HBox intHBox = new HBox();
+        intHBox.getChildren().add(intLabel);
+        intHBox.getChildren().add(abilityScoresSpinners.get("int"));
+        //wis
+        HBox wisHBox = new HBox();
+        wisHBox.getChildren().add(wisLabel);
+        wisHBox.getChildren().add(abilityScoresSpinners.get("wis"));
+        //cha
+        HBox chaHBox = new HBox();
+        chaHBox.getChildren().add(chaLabel);
+        chaHBox.getChildren().add(abilityScoresSpinners.get("cha"));
+
+        //Combine everything
+        strIntScoresVBox.getChildren().add(strHBox);
+        strIntScoresVBox.getChildren().add(intHBox);
+
+        dexWisScoresVBox.getChildren().add(dexHBox);
+        dexWisScoresVBox.getChildren().add(wisHBox);
+
+        conChaScoresVBox.getChildren().add(conHBox);
+        conChaScoresVBox.getChildren().add(chaHBox);
+
+        abilityScoresHBox.getChildren().add(strIntScoresVBox);
+        abilityScoresHBox.getChildren().add(dexWisScoresVBox);
+        abilityScoresHBox.getChildren().add(conChaScoresVBox);
+
+        // Spacing
+        strIntScoresVBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+        dexWisScoresVBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+        conChaScoresVBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+        abilityScoresHBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+
+        // Save Preparation and Combination
         HBox saveHBox = new HBox();
 
+        // Button Creation
         Button saveCharacterButton = new Button();
         saveCharacterButton.setText("Save Character");
         saveCharacterButton.setOnAction(event -> {
-
-            System.out.println("Save Button Pressed");
-            /* Inside this, we need to have it output the file of the playerCharacter */
             saveCharacter();
         });
-        
-        nameHBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
-        overallVBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
-        saveHBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
-        overallVBox.setPadding(new Insets(ApplicationConfig.DEFAULT_PADDING));
-        overallVBox.setAlignment(Pos.TOP_LEFT);
 
         Button saveCharacterAsButton = new Button();
         saveCharacterAsButton.setText("Save As");
         saveCharacterAsButton.setOnAction(event -> {
-
-            System.out.println("Save As Button Pressed");
-
             saveCharacterAs();
         });
 
+        // Combination
         saveHBox.getChildren().add(saveCharacterButton);
         saveHBox.getChildren().add(saveCharacterAsButton);
 
+        // Spacing
+        saveHBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+
+
+        // Spacing Settings (Final)
+        overallVBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+        overallVBox.setPadding(new Insets(ApplicationConfig.DEFAULT_PADDING));
+        overallVBox.setAlignment(Pos.TOP_LEFT);
+
+
+        // Final Combination and Display
         overallVBox.getChildren().add(nameHBox);
+        overallVBox.getChildren().add(abilityScoresHBox);
         overallVBox.getChildren().add(saveHBox);
 
         layout.getChildren().add(overallVBox);
@@ -131,7 +223,6 @@ public class CharacterEditWindow {
     }
 
     /**
-     * @TODO This method is missing the parse to JSON function, and requires the playerCharacter.toString to get its JSON!
      * This method is used to save the currently open character.
      * It will, by default, remember where you last saved, or loaded from,
      * and save to that location.
@@ -158,7 +249,6 @@ public class CharacterEditWindow {
     }
 
     /**
-     * @TODO This method is missing the parse to JSON function, and requires the playerCharacter.toString to get its JSON!
      * This method is used to save the currently open character under a name that you specify.
      */
     private void saveCharacterAs() {
@@ -207,7 +297,7 @@ public class CharacterEditWindow {
      */
     private void saveFile() {
         try{
-            playerCharacter = updateCharacterForSave();
+           updateCharacterForSave();
 
             PrintWriter pw = new PrintWriter(saveLocation);
 
@@ -226,19 +316,25 @@ public class CharacterEditWindow {
      * It returns the new PlayerCharacter object that has been prepared for saving
      * @return the updated PlayerCharacter object.
      */
-    private PlayerCharacter updateCharacterForSave() {
+    private void updateCharacterForSave() {
 
-        PlayerCharacter characterForSave = new PlayerCharacter(nameField.getText(), playerCharacter.abilityScores);
+        AbilityScores newAbilities = new AbilityScores(
+                abilityScoresSpinners.get("str").getValue(),
+                abilityScoresSpinners.get("dex").getValue(),
+                abilityScoresSpinners.get("con").getValue(),
+                abilityScoresSpinners.get("int").getValue(),
+                abilityScoresSpinners.get("wis").getValue(),
+                abilityScoresSpinners.get("cha").getValue()
+        );
 
-        return characterForSave;
+        playerCharacter = new PlayerCharacter(nameField.getText(), newAbilities);
     }
 
     /**
-     * @TODO This method is extremely simple as is, and requires the json parser touch-up that we will be doing.
      * This is only to be called if you are loading a character from saveLocation
-     * @return the character that was saved in saveLocation
+     * @return the character that was saved in saveLocation (null for errored)
      */
-    private PlayerCharacter parseSaveFile() throws FileNotFoundException {
+    private void parseSaveFile() {
 
         try {
             FileReader fr = new FileReader(saveLocation);
@@ -252,18 +348,12 @@ public class CharacterEditWindow {
             }
 
             // The PlayerCharacter class will return a new instance of itself after parsing the JSON file
-            PlayerCharacter characterFromLoad = PlayerCharacter.parseJSON(contents);
-
-            return characterFromLoad;
+            playerCharacter = new PlayerCharacter(contents, true);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException i) {
             i.printStackTrace();
-        } catch (InvalidSyntaxException s) {
-            s.printStackTrace();
         }
-
-        throw new FileNotFoundException();
     }
 }
