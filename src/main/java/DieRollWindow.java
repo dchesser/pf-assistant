@@ -6,6 +6,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -22,10 +23,11 @@ public class DieRollWindow
 	System.out.println("Rolled " + roll);
     }
 
-    private MenuItem dieMenuItem(String label, Die die)
+    private MenuItem dieMenuItem(String label, Die die, String combo)
     {
 	MenuItem temp = new MenuItem(label);
 	temp.setOnAction(event -> roll(die));
+	temp.setAccelerator(KeyCombination.keyCombination(combo));
 
 	return temp;
     }
@@ -39,13 +41,13 @@ public class DieRollWindow
 	MenuBar dieMenu = new MenuBar();
 	Menu rollMenu = new Menu("Roll");
 
-	rollMenu.getItems().addAll(dieMenuItem("d4", Die.d4),
-				   dieMenuItem("d6", Die.d6),
-				   dieMenuItem("d8", Die.d8),
-				   dieMenuItem("d10", Die.d10),
-				   dieMenuItem("d12", Die.d12),
-				   dieMenuItem("d20", Die.d20),
-				   dieMenuItem("d%", Die.d100));
+	rollMenu.getItems().addAll(dieMenuItem("d4", Die.d4, "Ctrl+1"),
+				   dieMenuItem("d6", Die.d6, "Ctrl+2"),
+				   dieMenuItem("d8", Die.d8, "Ctrl+3"),
+				   dieMenuItem("d10", Die.d10, "Ctrl+4"),
+				   dieMenuItem("d12", Die.d12, "Ctrl+5"),
+				   dieMenuItem("d20", Die.d20, "Ctrl+6"),
+				   dieMenuItem("d%", Die.d100, "Ctrl+7"));
 	dieMenu.getMenus().addAll(rollMenu);
 
 	VBox root = new VBox();
