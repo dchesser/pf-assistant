@@ -5,12 +5,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import network.cardboard.crystallogic.AbilityScores;
+import static network.cardboard.crystallogic.AbilityScores.BuildMethod;
 import network.cardboard.crystallogic.PlayerCharacter;
 
 import java.io.BufferedReader;
@@ -71,6 +76,22 @@ public class CharacterEditWindow {
         createWindow(); // This goes at the end, as it requires playerCharacter to have a name
     }
 
+    private void setScoreSpinners(AbilityScores stats)
+    {
+	abilityScoresSpinners.get("str")
+	    .getValueFactory().setValue(stats.strength.getValue());
+	abilityScoresSpinners.get("dex")
+	    .getValueFactory().setValue(stats.dexterity.getValue());
+	abilityScoresSpinners.get("con")
+	    .getValueFactory().setValue(stats.constitution.getValue());
+	abilityScoresSpinners.get("int")
+	    .getValueFactory().setValue(stats.intelligence.getValue());
+	abilityScoresSpinners.get("wis")
+	    .getValueFactory().setValue(stats.wisdom.getValue());
+	abilityScoresSpinners.get("cha")
+	    .getValueFactory().setValue(stats.charisma.getValue());
+    }
+
     /**
      * Method: Character Edit Window
      *
@@ -89,9 +110,27 @@ public class CharacterEditWindow {
      * It was created so that there would be less repeated code within this class.
      */
     private void createWindow() {
+	MenuBar menu = new MenuBar();
+	Menu generateMenu = new Menu("Generate");
+	MenuItem generateClassical = new MenuItem("Classical (3d6)");
+	MenuItem generateModern = new MenuItem("Modern (4d6b3)");
+	MenuItem generateHeroic = new MenuItem("Heroic (2d6+6)");
+	generateClassical.setOnAction(event -> {
+		setScoreSpinners(new AbilityScores(BuildMethod.CLASSICAL));
+	    });
+	generateModern.setOnAction(event -> {
+		setScoreSpinners(new AbilityScores(BuildMethod.MODERN));
+	    });
+	generateHeroic.setOnAction(event -> {
+		setScoreSpinners(new AbilityScores(BuildMethod.HEROIC));
+	    });
+	generateMenu.getItems().addAll(generateClassical,
+				       generateModern,
+				       generateHeroic);
+	menu.getMenus().addAll(generateMenu);
 
         // Layout creation:
-        StackPane layout = new StackPane();
+        BorderPane layout = new BorderPane();
         VBox overallVBox = new VBox();
 
 
@@ -201,19 +240,18 @@ public class CharacterEditWindow {
         // Spacing
         saveHBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
 
-
         // Spacing Settings (Final)
         overallVBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
         overallVBox.setPadding(new Insets(ApplicationConfig.DEFAULT_PADDING));
         overallVBox.setAlignment(Pos.TOP_LEFT);
-
 
         // Final Combination and Display
         overallVBox.getChildren().add(nameHBox);
         overallVBox.getChildren().add(abilityScoresHBox);
         overallVBox.getChildren().add(saveHBox);
 
-        layout.getChildren().add(overallVBox);
+	layout.setTop(menu);
+	layout.setCenter(overallVBox);
 
         stage = new Stage();
         stage.setTitle(playerCharacter.getName().isEmpty() ?  playerCharacter.getName() : "Create a Character");
