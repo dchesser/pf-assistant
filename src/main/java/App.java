@@ -77,12 +77,11 @@ public class App extends Application {
 
         rootView.getChildren().add(createCharacterButton);
         rootView.getChildren().add(loadCharacterButton);
+	rootView.getChildren().add(rollDieWindowButton());
         rootView.getChildren().add(quitButton);
         rootView.setAlignment(Pos.CENTER);
         rootView.setSpacing(25);
         primaryStage.setScene(new Scene(rootView, 200, 200));
-
-
 
         primaryStage.show();
     }
@@ -94,5 +93,11 @@ public class App extends Application {
         } else {
             newWindow = new CharacterEditWindow();
         }
+    }
+
+    private Button rollDieWindowButton() {
+	Button btn = new Button("Roll Dice");
+	btn.setOnAction(event -> new DieRollWindow());
+	return btn;
     }
 }
