@@ -1,4 +1,5 @@
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -23,20 +24,26 @@ public class App extends Application {
         primaryStage.setTitle("PathFinder Assistant");
 
         // Create character button
-        Button createCharacterButton = new Button();
-        createCharacterButton.setDefaultButton(true);
-        createCharacterButton.setText("Create Character");
-
+        Button createClassicCharacterButton = new Button();
+        createClassicCharacterButton.setText("Create Character - Classic Method");
         /* Open new window for editing a character */
-        createCharacterButton.setOnAction(event -> {
-
-            System.out.println("Create Character Button Pressed");
-
-            /*
-            The window is created in the CharacterEditWindow class.
-            It will also handle the creation of the character object.
-             */
+        createClassicCharacterButton.setOnAction(event -> {
+            System.out.println("Create Classic Method button pressed");
             new CharacterCreateWindow(CharacterCreateWindow.Method.CLASSIC);
+        });
+
+        Button createModernCharacterButton = new Button();
+        createModernCharacterButton.setText("Create Character - Modern Method");
+        createModernCharacterButton.setOnAction(event -> {
+            System.out.println("Create Modern Method button pressed");
+            new CharacterCreateWindow(CharacterCreateWindow.Method.MODERN);
+        });
+
+        Button createHeroicCharacterButton = new Button();
+        createHeroicCharacterButton.setText("Create Character - Heroic Method");
+        createHeroicCharacterButton.setOnAction(event -> {
+            System.out.println("Create Heroic Method button pressed");
+            new CharacterCreateWindow(CharacterCreateWindow.Method.HEROIC);
         });
 
         // Load character button
@@ -75,13 +82,16 @@ public class App extends Application {
 
         VBox rootView = new VBox();
 
-        rootView.getChildren().add(createCharacterButton);
+        rootView.getChildren().add(createClassicCharacterButton);
+        rootView.getChildren().add(createModernCharacterButton);
+        rootView.getChildren().add(createHeroicCharacterButton);
         rootView.getChildren().add(loadCharacterButton);
-	rootView.getChildren().add(rollDieWindowButton());
+	    rootView.getChildren().add(rollDieWindowButton());
         rootView.getChildren().add(quitButton);
         rootView.setAlignment(Pos.CENTER);
-        rootView.setSpacing(25);
-        primaryStage.setScene(new Scene(rootView, 200, 200));
+        rootView.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+        rootView.setPadding(new Insets(ApplicationConfig.DEFAULT_PADDING));
+        primaryStage.setScene(new Scene(rootView));
 
         primaryStage.show();
     }
