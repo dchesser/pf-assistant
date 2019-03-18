@@ -36,7 +36,7 @@ public class App extends Application {
             The window is created in the CharacterEditWindow class.
             It will also handle the creation of the character object.
              */
-            characterWindow(null);
+            new CharacterCreateWindow(CharacterCreateWindow.Method.CLASSIC);
         });
 
         // Load character button
