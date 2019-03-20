@@ -86,7 +86,7 @@ public class App extends Application {
         rootView.getChildren().add(createModernCharacterButton);
         rootView.getChildren().add(createHeroicCharacterButton);
         rootView.getChildren().add(loadCharacterButton);
-	    rootView.getChildren().add(rollDieWindowButton());
+	      rootView.getChildren().add(rollDieWindowButton());
         rootView.getChildren().add(quitButton);
         rootView.setAlignment(Pos.CENTER);
         rootView.setSpacing(ApplicationConfig.DEFAULT_SPACING);
