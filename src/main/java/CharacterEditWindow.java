@@ -184,15 +184,11 @@ public class CharacterEditWindow {
         // Button Creation
         Button saveCharacterButton = new Button();
         saveCharacterButton.setText("Save Character");
-        saveCharacterButton.setOnAction(event -> {
-            saveCharacter();
-        });
+        saveCharacterButton.setOnAction(event -> saveCharacter());
 
         Button saveCharacterAsButton = new Button();
         saveCharacterAsButton.setText("Save As");
-        saveCharacterAsButton.setOnAction(event -> {
-            saveCharacterAs();
-        });
+        saveCharacterAsButton.setOnAction(event -> saveCharacterAs());
 
         // Combination
         saveHBox.getChildren().add(saveCharacterButton);
