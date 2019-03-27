@@ -26,18 +26,19 @@ public class PlayerCharacter
     private String name;
     public AbilityScores abilityScores;
 
-    public PlayerCharacter(String contents, boolean isJson)
+    public PlayerCharacter(String contents)
     {
-        if(isJson) {
-            try {
-                parseJSON(contents);
-            } catch (InvalidSyntaxException e) {
-                e.printStackTrace();
-            }
-        } else {
-            name = contents;
-            this.abilityScores = new AbilityScores(10);
-        }
+	name = contents;
+	this.abilityScores = new AbilityScores(10);
+    }
+
+    public PlayerCharacter(JsonNode json)
+    {
+	try {
+	    parseJSON(json);
+	} catch (InvalidSyntaxException ise) {
+	    ise.printStackTrace();
+	}
     }
 
     public PlayerCharacter(String name, BuildMethod rolls)
@@ -52,19 +53,16 @@ public class PlayerCharacter
         this.abilityScores = abilityScores;
     }
 
-    public void parseJSON(String json) throws InvalidSyntaxException
+    public void parseJSON(JsonNode node) throws InvalidSyntaxException
     {
-        JdomParser parser = new JdomParser();
-
-        JsonNode node = parser.parse(json);
-
-        name  = node.getStringValue("name");
-        int s= Integer.parseInt(node.getNode("abilityScores").getNumberValue("STR"));
-        int d = Integer.parseInt(node.getNode("abilityScores").getNumberValue("DEX"));
-        int con = Integer.parseInt(node.getNode("abilityScores").getNumberValue("CON"));
-        int i = Integer.parseInt(node.getNode("abilityScores").getNumberValue("INT"));
-        int w = Integer.parseInt(node.getNode("abilityScores").getNumberValue("WIS"));
-        int c = Integer.parseInt(node.getNode("abilityScores").getNumberValue("CHA"));
+        name = node.getStringValue("name");
+	JsonNode abilities = node.getNode("abilityScores");
+        int s= Integer.parseInt(abilities.getNumberValue("STR"));
+        int d = Integer.parseInt(abilities.getNumberValue("DEX"));
+        int con = Integer.parseInt(abilities.getNumberValue("CON"));
+        int i = Integer.parseInt(abilities.getNumberValue("INT"));
+        int w = Integer.parseInt(abilities.getNumberValue("WIS"));
+        int c = Integer.parseInt(abilities.getNumberValue("CHA"));
 
         abilityScores = new AbilityScores(s, d, con, i, w, c);
     }
