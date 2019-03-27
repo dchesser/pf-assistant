@@ -1,6 +1,17 @@
 package network.cardboard.crystallogic;
 
+import argo.format.JsonFormatter;
+import argo.format.PrettyJsonFormatter;
+import argo.jdom.JdomParser;
+import argo.jdom.JsonNode;
+import argo.jdom.JsonNodeBuilder;
+import argo.saj.InvalidSyntaxException;
 import network.cardboard.crystallogic.AbilityScores.BuildMethod;
+
+
+import static argo.jdom.JsonNodeBuilders.aNumberBuilder;
+import static argo.jdom.JsonNodeBuilders.aStringBuilder;
+import static argo.jdom.JsonNodeBuilders.anObjectBuilder;
 
 /**
  * Player Characters (or "PCs") are the very essence of Pathfinder or
@@ -15,10 +26,18 @@ public class PlayerCharacter
     private String name;
     public AbilityScores abilityScores;
 
-    public PlayerCharacter(String name)
+    public PlayerCharacter(String contents, boolean isJson)
     {
-        this.name = name;
-        this.abilityScores = new AbilityScores(10);
+        if(isJson) {
+            try {
+                parseJSON(contents);
+            } catch (InvalidSyntaxException e) {
+                e.printStackTrace();
+            }
+        } else {
+            name = contents;
+            this.abilityScores = new AbilityScores(10);
+        }
     }
 
     public PlayerCharacter(String name, BuildMethod rolls)
@@ -33,24 +52,48 @@ public class PlayerCharacter
         this.abilityScores = abilityScores;
     }
 
+    public void parseJSON(String json) throws InvalidSyntaxException
+    {
+        JdomParser parser = new JdomParser();
+
+        JsonNode node = parser.parse(json);
+
+        name  = node.getStringValue("name");
+        int s= Integer.parseInt(node.getNode("abilityScores").getNumberValue("STR"));
+        int d = Integer.parseInt(node.getNode("abilityScores").getNumberValue("DEX"));
+        int con = Integer.parseInt(node.getNode("abilityScores").getNumberValue("CON"));
+        int i = Integer.parseInt(node.getNode("abilityScores").getNumberValue("INT"));
+        int w = Integer.parseInt(node.getNode("abilityScores").getNumberValue("WIS"));
+        int c = Integer.parseInt(node.getNode("abilityScores").getNumberValue("CHA"));
+
+        abilityScores = new AbilityScores(s, d, con, i, w, c);
+    }
+
     public String getName()
     {
-	return this.name;
+	    return this.name;
     }
 
     // This toString should probably be replaced when we finish figuring out what json library should be used.
     @Override
     public String toString() {
 
-        String name = "\"name\":\"" + getName() + "\","; // It didn't like just putting name, no idea why
-        String aScores = "\"abilityScores\":{" +
-                "\"strength\":" + abilityScores.strength.getValue() + "," +
-                "\"dexterity\":" + abilityScores.dexterity.getValue() + "," +
-                "\"constitution\":" + abilityScores.constitution.getValue() + "," +
-                "\"intelligence\":" + abilityScores.intelligence.getValue() + "," +
-                "\"wisdom\":" + abilityScores.wisdom.getValue() + "," +
-                "\"charisma\":" + abilityScores.charisma.getValue() + "}";
+        // create json object
+        JsonNodeBuilder builder = anObjectBuilder()
+                .withField("name", aStringBuilder(name))
+                .withField("abilityScores", anObjectBuilder()
+                        .withField("STR", aNumberBuilder("" + abilityScores.strength.getValue()))
+                        .withField("DEX", aNumberBuilder("" + abilityScores.dexterity.getValue()))
+                        .withField("CON", aNumberBuilder("" + abilityScores.constitution.getValue()))
+                        .withField("INT", aNumberBuilder("" + abilityScores.intelligence.getValue()))
+                        .withField("WIS", aNumberBuilder("" + abilityScores.wisdom.getValue()))
+                        .withField("CHA", aNumberBuilder("" + abilityScores.wisdom.getValue()))
+                );
 
-        return "{"+(name + aScores) + "}";
+        JsonNode json = builder.build();
+
+        JsonFormatter formatter = new PrettyJsonFormatter();
+
+        return formatter.format(json);
     }
 }
