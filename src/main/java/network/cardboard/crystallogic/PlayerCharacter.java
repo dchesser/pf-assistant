@@ -1,13 +1,15 @@
 package network.cardboard.crystallogic;
 
+import java.util.HashMap;
 import argo.format.JsonFormatter;
 import argo.format.PrettyJsonFormatter;
 import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeBuilder;
 import argo.saj.InvalidSyntaxException;
+import network.cardboard.crystallogic.PlayerSkill;
+import network.cardboard.crystallogic.PlayerSkill.GameSkill;
 import network.cardboard.crystallogic.AbilityScores.BuildMethod;
-
 
 import static argo.jdom.JsonNodeBuilders.aNumberBuilder;
 import static argo.jdom.JsonNodeBuilders.aStringBuilder;
@@ -25,11 +27,13 @@ public class PlayerCharacter
 {
     private String name;
     public AbilityScores abilityScores;
+    private HashMap<GameSkill, PlayerSkill> skillSet;
 
     public PlayerCharacter(String contents)
     {
 	name = contents;
 	this.abilityScores = new AbilityScores(10);
+	this.skillSet = PlayerSkill.skillList();
     }
 
     public PlayerCharacter(JsonNode json)
@@ -39,6 +43,8 @@ public class PlayerCharacter
 	} catch (InvalidSyntaxException ise) {
 	    ise.printStackTrace();
 	}
+
+	this.skillSet = PlayerSkill.skillList();
     }
 
     public PlayerCharacter(String name, BuildMethod rolls)
@@ -93,5 +99,41 @@ public class PlayerCharacter
         JsonFormatter formatter = new PrettyJsonFormatter();
 
         return formatter.format(json);
+    }
+
+    public PlayerSkill getSkill(GameSkill skill)
+    {
+	return this.skillSet.get(skill);
+    }
+
+    public int rollForSkill(GameSkill skill)
+    {
+	PlayerSkill playerSkill = this.getSkill(skill);
+
+	return Die.d20.roll() + skillBonuses(skill);
+    }
+
+    private int skillBonuses(GameSkill skill)
+    {
+	int bonuses = 0;
+	PlayerSkill playerSkill = this.getSkill(skill);
+
+	if (playerSkill.isBasedOnStrength())
+	    bonuses += this.abilityScores.strength.getModifier();
+	else if (playerSkill.isBasedOnDexterity())
+	    bonuses += this.abilityScores.dexterity.getModifier();
+	else if (playerSkill.isBasedOnConstitution())
+	    bonuses += this.abilityScores.constitution.getModifier();
+	else if (playerSkill.isBasedOnIntelligence())
+	    bonuses += this.abilityScores.intelligence.getModifier();
+	else if (playerSkill.isBasedOnWisdom())
+	    bonuses += this.abilityScores.wisdom.getModifier();
+	else if (playerSkill.isBasedOnCharisma())
+	    bonuses += this.abilityScores.charisma.getModifier();
+
+	bonuses += playerSkill.getRanks();
+
+	// return sie.d20.roll();
+	return bonuses;
     }
 }
