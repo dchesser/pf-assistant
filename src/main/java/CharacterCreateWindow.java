@@ -33,7 +33,8 @@ public class CharacterCreateWindow {
     protected enum Method {
         HEROIC,
         MODERN,
-        CLASSIC
+        CLASSIC,
+        POINT_BUY
     }
 
     private PlayerCharacter playerCharacter;
@@ -58,6 +59,8 @@ public class CharacterCreateWindow {
                 break;
             case CLASSIC:
                 scoreRolls = rollClassicAbilityScores();
+                break;
+            case POINT_BUY:
                 break;
         }
         createWindow();
@@ -359,6 +362,7 @@ public class CharacterCreateWindow {
      * This method will save the character to the save location
      *
      * @TODO Probably need better naming for methods
+     * @TODO Refactor saving functionality into an interface the Character class implements
      */
     private void saveFile() {
         try {
