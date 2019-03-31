@@ -89,8 +89,12 @@ public class App extends Application {
         fileMenu.getItems().addAll(characterMenu, loadCharacter, quit);
         menuBar.getMenus().addAll(fileMenu);
 
+        Text applicationName = new Text();
+        applicationName.setText("PathFinder Assistant v" + ApplicationConfig.VERSION_STRING);
+
         VBox rootView = new VBox();
 
+        rootView.getChildren().add(applicationName);
         rootView.getChildren().add(rollDieWindowButton());
         rootView.getChildren().add(menuBar);
 
