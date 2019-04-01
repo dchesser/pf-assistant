@@ -8,49 +8,60 @@ import javafx.scene.control.SpinnerValueFactory;
  */
 public class PointBuySpinnerValueFactory extends SpinnerValueFactory.IntegerSpinnerValueFactory {
 
-    private int pointsLeft;
+    public PointBuyPool pointsLeft;
 
-    public PointBuySpinnerValueFactory(int min, int max) {
-        super(min, max);
-    }
-
-    public PointBuySpinnerValueFactory(int min, int max, int initialValue) {
-        super(min, max, initialValue);
-    }
-
-    public PointBuySpinnerValueFactory(int min, int max, int initialValue, int pointsLeft) {
+    public PointBuySpinnerValueFactory(int min, int max, int initialValue, PointBuyPool pointsLeft) {
         super(min, max, initialValue);
         this.pointsLeft = pointsLeft;
     }
 
     @Override
     public void decrement(int steps) {
-        calculatePointsChange();
+        calculatePointsChangeDecrement();
         super.decrement(steps);
     }
 
     @Override
     public void increment(int steps) {
-        calculatePointsChange();
+        calculatePointsChangeIncrement();
         super.increment(steps);
     }
 
-    public int getPointsLeft() {
-        return pointsLeft;
-    }
-
-    public void setPointsLeft(int pointsLeft) {
-        this.pointsLeft = pointsLeft;
-    }
-
-    private void calculatePointsChange() {
+    private void calculatePointsChangeDecrement() {
         int value = this.getValue();
-        if (value >= 10) {
+        if (value + 1 > 10) {
+            value += 1;
             int pointsChange = (int) Math.ceil((value - 10) / 2.);
-            pointsLeft -= pointsChange;
-        } else if (value < 10) {
+            System.out.println("Points change: " + pointsChange);
+            pointsLeft.setPointPool(pointsLeft.getPointPool() + Math.abs(pointsChange));
+        } else if (value - 1 < 10) {
+            value -= 1;
             int pointsChange = (int) Math.floor((value - 10) / 2.);
-            pointsLeft -= pointsChange;
+            System.out.println("Points change: " + pointsChange);
+            pointsLeft.setPointPool(pointsLeft.getPointPool() + Math.abs(pointsChange));
+        } else {
+            int pointsChange = 0;
+            System.out.println("Points change: " + pointsChange);
+            pointsLeft.setPointPool(pointsLeft.getPointPool() + Math.abs(pointsChange));
+        }
+    }
+
+    private void calculatePointsChangeIncrement() {
+        int value = this.getValue();
+        if (value + 1 > 10) {
+            value += 1;
+            int pointsChange = (int) Math.ceil((value - 10) / 2.);
+            System.out.println("Points change: " + pointsChange);
+            pointsLeft.setPointPool(pointsLeft.getPointPool() - Math.abs(pointsChange));
+        } else if (value - 1 < 10) {
+            value -= 1;
+            int pointsChange = (int) Math.floor((value - 10) / 2.);
+            System.out.println("Points change: " + pointsChange);
+            pointsLeft.setPointPool(pointsLeft.getPointPool() - Math.abs(pointsChange));
+        } else if (value - 1 == 10 || value + 1 == 10) {
+            int pointsChange = 0;
+            System.out.println("Points change: " + pointsChange);
+            pointsLeft.setPointPool(pointsLeft.getPointPool() - Math.abs(pointsChange));
         }
     }
 }
