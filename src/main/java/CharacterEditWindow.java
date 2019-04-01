@@ -290,7 +290,7 @@ public class CharacterEditWindow {
     /**
      * This method will save the character to the save location
      * @TODO Probably need better naming for methods
-     * @TODO Refactor saving functionality into an interface the Character class implements
+     * @TODO Refactor saving functionality into an interface the PlayerCharacter class implements
      */
     private void saveFile() {
         try{
