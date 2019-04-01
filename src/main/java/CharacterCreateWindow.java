@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import network.cardboard.crystallogic.AbilityScores;
 import network.cardboard.crystallogic.Die;
 import network.cardboard.crystallogic.PlayerCharacter;
+import network.cardboard.crystallogic.PointBuySpinnerValueFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,20 +54,82 @@ public class CharacterCreateWindow {
         switch (method) {
             case HEROIC:
                 scoreRolls = rollHeroicAbilityScores();
+                createRollWindow();
                 break;
             case MODERN:
                 scoreRolls = rollModernAbilityScores();
+                createRollWindow();
                 break;
             case CLASSIC:
                 scoreRolls = rollClassicAbilityScores();
+                createRollWindow();
                 break;
             case POINT_BUY:
+                scoreRolls = pointBuyScores();
+                createBuyWindow();
                 break;
         }
-        createWindow();
     }
 
-    private void createWindow() {
+    private void createBuyWindow() {
+        StackPane layout = new StackPane();
+        VBox container = new VBox();
+
+        // Character name information
+        HBox nameBox = new HBox();
+        Label nameLabel = new Label("Name: ");
+        characterName = new TextField();
+        nameBox.getChildren().addAll(nameLabel, characterName);
+        nameBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+
+        HBox pointsLeftBox = new HBox();
+        Text pointsLeftText = new Text("Points left: 15");
+        pointsLeftBox.getChildren().add(pointsLeftText);
+
+        // Save Preparation and Combination
+        HBox saveHBox = new HBox();
+
+        // Button Creation
+        Button saveCharacterButton = new Button();
+        saveCharacterButton.setText("Save Character");
+        saveCharacterButton.setOnAction(event -> {
+            if (validAbilityScores()) {
+                saveCharacter();
+            } else {
+                displayValidationError();
+            }
+        });
+
+        Button saveCharacterAsButton = new Button();
+        saveCharacterAsButton.setText("Save As");
+        saveCharacterAsButton.setOnAction(event -> {
+            if (validAbilityScores()) {
+                saveCharacterAs();
+            } else {
+                displayValidationError();
+            }
+        });
+
+        // Combination
+        saveHBox.getChildren().add(saveCharacterButton);
+        saveHBox.getChildren().add(saveCharacterAsButton);
+
+        // Spacing
+        saveHBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+
+        // Show the window
+        container.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+        container.setPadding(new Insets(ApplicationConfig.DEFAULT_PADDING));
+        container.setAlignment(Pos.TOP_LEFT);
+        container.getChildren().addAll(nameBox, pointsLeftBox, saveHBox);
+        layout.getChildren().add(container);
+        stage = new Stage();
+        stage.setTitle("Create a character");
+        stage.setScene(new Scene(layout));
+        stage.show();
+    }
+
+    private void createRollWindow() {
         StackPane layout = new StackPane();
         VBox container = new VBox();
 
@@ -92,6 +155,7 @@ public class CharacterCreateWindow {
         abilityScores.put("int", new Spinner<>(scoreOptions));
         abilityScores.put("wis", new Spinner<>(scoreOptions));
         abilityScores.put("cha", new Spinner<>(scoreOptions));
+
 
         Label strLabel = new Label("STR:");
         Label dexLabel = new Label("DEX:");
@@ -238,6 +302,17 @@ public class CharacterCreateWindow {
         return result;
     }
 
+    private HashMap<String, Integer> pointBuyScores() {
+        HashMap<String, Integer> result = new HashMap<>();
+        result.put("A", 10);
+        result.put("B", 10);
+        result.put("C", 10);
+        result.put("D", 10);
+        result.put("E", 10);
+        result.put("F", 10);
+        return result;
+    }
+
     private int rollClassic() {
         System.out.println("rollClassic method");
         int roll1 = Die.d6.roll();
@@ -362,7 +437,7 @@ public class CharacterCreateWindow {
      * This method will save the character to the save location
      *
      * @TODO Probably need better naming for methods
-     * @TODO Refactor saving functionality into an interface the Character class implements
+     * @TODO Refactor saving functionality into an interface the PlayerCharacter class implements
      */
     private void saveFile() {
         try {
