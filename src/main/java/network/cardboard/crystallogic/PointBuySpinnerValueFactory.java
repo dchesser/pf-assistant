@@ -17,51 +17,66 @@ public class PointBuySpinnerValueFactory extends SpinnerValueFactory.IntegerSpin
 
     @Override
     public void decrement(int steps) {
-        calculatePointsChangeDecrement();
-        super.decrement(steps);
+        calculatePointsChangeForDecrement(steps);
     }
 
     @Override
     public void increment(int steps) {
-        calculatePointsChangeIncrement();
-        super.increment(steps);
+        calculatePointsChangeForIncrement(steps);
     }
 
-    private void calculatePointsChangeDecrement() {
+    private void calculatePointsChangeForDecrement(int steps) {
         int startValue = this.getValue();
         if (startValue + 1 > 10) {
             int targetValue = startValue + 1;
             int cost = (int) Math.ceil((targetValue - 10) / 2.);
-            System.out.println("Points change: " + cost);
-            pointsLeft.setPointPool(pointsLeft.getPointPool() + Math.abs(cost));
+            setNewPointsValueForDecrement(startValue, cost, steps);
         } else if (startValue - 1 < 10) {
             int targetValue = startValue - 1;
             int cost = (int) Math.floor((targetValue - 10) / 2.);
-            System.out.println("Cost: " + cost);
-            pointsLeft.setPointPool(pointsLeft.getPointPool() + Math.abs(cost));
+            setNewPointsValueForDecrement(startValue, cost, steps);
         } else {
             int pointsChange = 0;
-            System.out.println("Points change: " + pointsChange);
             pointsLeft.setPointPool(pointsLeft.getPointPool() + Math.abs(pointsChange));
         }
     }
 
-    private void calculatePointsChangeIncrement() {
+    private void calculatePointsChangeForIncrement(int steps) {
         int startValue = this.getValue();
         if (startValue + 1 > 10) {
             int targetValue = startValue + 1;
             int cost = (int) Math.ceil((targetValue - 10) / 2.);
             System.out.println("Points change: " + cost);
-            pointsLeft.setPointPool(pointsLeft.getPointPool() - Math.abs(cost));
+            setNewPointsValueForIncrement(startValue, cost, steps);
         } else if (startValue - 1 < 10) {
             int targetValue = startValue - 1;
             int cost = (int) Math.floor((targetValue - 10) / 2.);
             System.out.println("Cost: " + cost);
-            pointsLeft.setPointPool(pointsLeft.getPointPool() - Math.abs(cost));
+            setNewPointsValueForIncrement(startValue, cost, steps);
         } else {
             int cost = 0;
             System.out.println("Points change: " + cost);
             pointsLeft.setPointPool(pointsLeft.getPointPool() - Math.abs(cost));
+        }
+    }
+
+    private void setNewPointsValueForDecrement(int startValue, int cost, int steps) {
+        int newPointsValue = pointsLeft.getPointPool() + Math.abs(cost);
+        if (newPointsValue <= 0) {
+            this.setValue(startValue);
+        } else {
+            pointsLeft.setPointPool(newPointsValue);
+            super.decrement(steps);
+        }
+    }
+
+    private void setNewPointsValueForIncrement(int startValue, int cost, int steps) {
+        int newPointsValue = pointsLeft.getPointPool() - Math.abs(cost);
+        if (newPointsValue <= 0) {
+            this.setValue(startValue);
+        } else {
+            pointsLeft.setPointPool(newPointsValue);
+            super.increment(steps);
         }
     }
 }
