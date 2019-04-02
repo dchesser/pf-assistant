@@ -62,7 +62,7 @@ public class PointBuySpinnerValueFactory extends SpinnerValueFactory.IntegerSpin
 
     private void setNewPointsValueForDecrement(int startValue, int cost, int steps) {
         int newPointsValue = pointsLeft.getPointPool() + Math.abs(cost);
-        if (newPointsValue <= 0) {
+        if (newPointsValue < 0) {
             this.setValue(startValue);
         } else {
             pointsLeft.setPointPool(newPointsValue);
@@ -72,7 +72,7 @@ public class PointBuySpinnerValueFactory extends SpinnerValueFactory.IntegerSpin
 
     private void setNewPointsValueForIncrement(int startValue, int cost, int steps) {
         int newPointsValue = pointsLeft.getPointPool() - Math.abs(cost);
-        if (newPointsValue <= 0) {
+        if (newPointsValue < 0) {
             this.setValue(startValue);
         } else {
             pointsLeft.setPointPool(newPointsValue);
