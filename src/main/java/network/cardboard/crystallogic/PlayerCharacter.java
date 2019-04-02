@@ -1,13 +1,15 @@
 package network.cardboard.crystallogic;
 
+import java.util.HashMap;
 import argo.format.JsonFormatter;
 import argo.format.PrettyJsonFormatter;
 import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeBuilder;
 import argo.saj.InvalidSyntaxException;
+import network.cardboard.crystallogic.PlayerSkill;
+import network.cardboard.crystallogic.PlayerSkill.GameSkill;
 import network.cardboard.crystallogic.AbilityScores.BuildMethod;
-
 
 import static argo.jdom.JsonNodeBuilders.aNumberBuilder;
 import static argo.jdom.JsonNodeBuilders.aStringBuilder;
@@ -25,19 +27,24 @@ public class PlayerCharacter
 {
     private String name;
     public AbilityScores abilityScores;
+    private HashMap<GameSkill, PlayerSkill> skillSet;
 
-    public PlayerCharacter(String contents, boolean isJson)
+    public PlayerCharacter(String contents)
     {
-        if(isJson) {
-            try {
-                parseJSON(contents);
-            } catch (InvalidSyntaxException e) {
-                e.printStackTrace();
-            }
-        } else {
-            name = contents;
-            this.abilityScores = new AbilityScores(10);
-        }
+	name = contents;
+	this.abilityScores = new AbilityScores(10);
+	this.skillSet = PlayerSkill.skillList();
+    }
+
+    public PlayerCharacter(JsonNode json)
+    {
+	try {
+	    parseJSON(json);
+	} catch (InvalidSyntaxException ise) {
+	    ise.printStackTrace();
+	}
+
+	this.skillSet = PlayerSkill.skillList();
     }
 
     public PlayerCharacter(String name, BuildMethod rolls)
@@ -52,19 +59,16 @@ public class PlayerCharacter
         this.abilityScores = abilityScores;
     }
 
-    public void parseJSON(String json) throws InvalidSyntaxException
+    public void parseJSON(JsonNode node) throws InvalidSyntaxException
     {
-        JdomParser parser = new JdomParser();
-
-        JsonNode node = parser.parse(json);
-
-        name  = node.getStringValue("name");
-        int s= Integer.parseInt(node.getNode("abilityScores").getNumberValue("STR"));
-        int d = Integer.parseInt(node.getNode("abilityScores").getNumberValue("DEX"));
-        int con = Integer.parseInt(node.getNode("abilityScores").getNumberValue("CON"));
-        int i = Integer.parseInt(node.getNode("abilityScores").getNumberValue("INT"));
-        int w = Integer.parseInt(node.getNode("abilityScores").getNumberValue("WIS"));
-        int c = Integer.parseInt(node.getNode("abilityScores").getNumberValue("CHA"));
+        name = node.getStringValue("name");
+	JsonNode abilities = node.getNode("abilityScores");
+        int s= Integer.parseInt(abilities.getNumberValue("STR"));
+        int d = Integer.parseInt(abilities.getNumberValue("DEX"));
+        int con = Integer.parseInt(abilities.getNumberValue("CON"));
+        int i = Integer.parseInt(abilities.getNumberValue("INT"));
+        int w = Integer.parseInt(abilities.getNumberValue("WIS"));
+        int c = Integer.parseInt(abilities.getNumberValue("CHA"));
 
         abilityScores = new AbilityScores(s, d, con, i, w, c);
     }
@@ -95,5 +99,41 @@ public class PlayerCharacter
         JsonFormatter formatter = new PrettyJsonFormatter();
 
         return formatter.format(json);
+    }
+
+    public PlayerSkill getSkill(GameSkill skill)
+    {
+	return this.skillSet.get(skill);
+    }
+
+    public int rollForSkill(GameSkill skill)
+    {
+	PlayerSkill playerSkill = this.getSkill(skill);
+
+	return Die.d20.roll() + skillBonuses(skill);
+    }
+
+    private int skillBonuses(GameSkill skill)
+    {
+	int bonuses = 0;
+	PlayerSkill playerSkill = this.getSkill(skill);
+
+	if (playerSkill.isBasedOnStrength())
+	    bonuses += this.abilityScores.strength.getModifier();
+	else if (playerSkill.isBasedOnDexterity())
+	    bonuses += this.abilityScores.dexterity.getModifier();
+	else if (playerSkill.isBasedOnConstitution())
+	    bonuses += this.abilityScores.constitution.getModifier();
+	else if (playerSkill.isBasedOnIntelligence())
+	    bonuses += this.abilityScores.intelligence.getModifier();
+	else if (playerSkill.isBasedOnWisdom())
+	    bonuses += this.abilityScores.wisdom.getModifier();
+	else if (playerSkill.isBasedOnCharisma())
+	    bonuses += this.abilityScores.charisma.getModifier();
+
+	bonuses += playerSkill.getRanks();
+
+	// return sie.d20.roll();
+	return bonuses;
     }
 }

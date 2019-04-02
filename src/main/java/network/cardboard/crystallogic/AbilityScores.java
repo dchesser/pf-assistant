@@ -14,6 +14,10 @@ import java.util.stream.IntStream;
  */
 public class AbilityScores
 {
+    public static enum Ability {
+	NUL, STR, DEX, CON, INT, WIS, CHA
+    }
+
     public AbilityScore strength;
     public AbilityScore dexterity;
     public AbilityScore constitution;

@@ -22,6 +22,9 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import argo.jdom.JdomParser;
+import argo.jdom.JsonNode;
+import argo.saj.InvalidSyntaxException;
 
 /**
  * This class is used for displaying the window that is used to edit characters.
@@ -51,7 +54,7 @@ public class CharacterEditWindow {
      */
     public CharacterEditWindow()
     {
-        playerCharacter = new PlayerCharacter("New Character", false);
+        playerCharacter = new PlayerCharacter("New Character");
 
         createWindow(); // This goes at the end, as it requires playerCharacter to have a name
     }
@@ -344,12 +347,15 @@ public class CharacterEditWindow {
             }
 
             // The PlayerCharacter class will return a new instance of itself after parsing the JSON file
-            playerCharacter = new PlayerCharacter(contents, true);
+	    JsonNode data = new JdomParser().parse(contents);
+            playerCharacter = new PlayerCharacter(data);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException i) {
             i.printStackTrace();
-        }
+	} catch (InvalidSyntaxException ise) {
+	    ise.printStackTrace();
+	}
     }
 }
