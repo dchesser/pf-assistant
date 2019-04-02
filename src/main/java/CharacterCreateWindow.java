@@ -32,7 +32,8 @@ public class CharacterCreateWindow {
         HEROIC,
         MODERN,
         CLASSIC,
-        POINT_BUY
+        POINT_BUY,
+        CUSTOM
     }
 
     private PlayerCharacter playerCharacter;
@@ -48,10 +49,13 @@ public class CharacterCreateWindow {
     private HBox errorHBox;
     private Stage stage;
 
+    private Method creationMethod;
+
     private PointBuyPool buyPool = new PointBuyPool();
 
     public CharacterCreateWindow(Method method) {
-        switch (method) {
+        creationMethod = method;
+        switch (creationMethod) {
             case HEROIC:
                 scoreRolls = rollHeroicAbilityScores();
                 createRollWindow();
@@ -483,18 +487,29 @@ public class CharacterCreateWindow {
      * It returns the new PlayerCharacter object that has been prepared for saving
      */
     private void updateCharacterForSave() {
-        AbilityScores newAbilities = new AbilityScores(
-            scoreRolls.get(abilityScoreRollSpinners.get("str").getValue()),
-            scoreRolls.get(abilityScoreRollSpinners.get("dex").getValue()),
-            scoreRolls.get(abilityScoreRollSpinners.get("con").getValue()),
-            scoreRolls.get(abilityScoreRollSpinners.get("int").getValue()),
-            scoreRolls.get(abilityScoreRollSpinners.get("wis").getValue()),
-            scoreRolls.get(abilityScoreRollSpinners.get("cha").getValue())
-        );
+        AbilityScores newAbilities;
+        if (!abilityScoreRollSpinners.isEmpty()) {
+            newAbilities = new AbilityScores(
+                scoreRolls.get(abilityScoreRollSpinners.get("str").getValue()),
+                scoreRolls.get(abilityScoreRollSpinners.get("dex").getValue()),
+                scoreRolls.get(abilityScoreRollSpinners.get("con").getValue()),
+                scoreRolls.get(abilityScoreRollSpinners.get("int").getValue()),
+                scoreRolls.get(abilityScoreRollSpinners.get("wis").getValue()),
+                scoreRolls.get(abilityScoreRollSpinners.get("cha").getValue())
+            );
+        } else {
+            newAbilities = new AbilityScores(
+                abilityScoreBuySpinners.get("str").getValue(),
+                abilityScoreBuySpinners.get("dex").getValue(),
+                abilityScoreBuySpinners.get("con").getValue(),
+                abilityScoreBuySpinners.get("int").getValue(),
+                abilityScoreBuySpinners.get("wis").getValue(),
+                abilityScoreBuySpinners.get("cha").getValue()
+            );
+        }
         playerCharacter = new PlayerCharacter(characterName.getText(), newAbilities);
     }
 
-    // @TODO Clean up the logic in this method
     private boolean validAbilityScores() {
         String strength = abilityScoreRollSpinners.get("str").getValue();
         String dexterity = abilityScoreRollSpinners.get("dex").getValue();
@@ -535,7 +550,7 @@ public class CharacterCreateWindow {
         Button saveCharacterButton = new Button();
         saveCharacterButton.setText("Save Character");
         saveCharacterButton.setOnAction(event -> {
-            if (validAbilityScores()) {
+            if (creationMethod == Method.POINT_BUY || creationMethod == Method.CUSTOM || validAbilityScores()) {
                 saveCharacter();
             } else {
                 displayValidationError();
@@ -545,7 +560,7 @@ public class CharacterCreateWindow {
         Button saveCharacterAsButton = new Button();
         saveCharacterAsButton.setText("Save As");
         saveCharacterAsButton.setOnAction(event -> {
-            if (validAbilityScores()) {
+            if (creationMethod == Method.POINT_BUY || creationMethod == Method.CUSTOM || validAbilityScores()) {
                 saveCharacterAs();
             } else {
                 displayValidationError();
