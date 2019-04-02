@@ -72,6 +72,10 @@ public class CharacterCreateWindow {
                 scoreRolls = pointBuyScores();
                 createBuyWindow();
                 break;
+            case CUSTOM:
+                scoreRolls = pointBuyScores();
+                createBuyWindow();
+                break;
         }
     }
 
@@ -100,12 +104,29 @@ public class CharacterCreateWindow {
         abilityScoreBuySpinners.put("wis", new Spinner<>());
         abilityScoreBuySpinners.put("cha", new Spinner<>());
 
-        abilityScoreBuySpinners.get("str").setValueFactory(new PointBuySpinnerValueFactory(7, 18, 10, buyPool));
-        abilityScoreBuySpinners.get("dex").setValueFactory(new PointBuySpinnerValueFactory(7, 18, 10, buyPool));
-        abilityScoreBuySpinners.get("con").setValueFactory(new PointBuySpinnerValueFactory(7, 18, 10, buyPool));
-        abilityScoreBuySpinners.get("int").setValueFactory(new PointBuySpinnerValueFactory(7, 18, 10, buyPool));
-        abilityScoreBuySpinners.get("wis").setValueFactory(new PointBuySpinnerValueFactory(7, 18, 10, buyPool));
-        abilityScoreBuySpinners.get("cha").setValueFactory(new PointBuySpinnerValueFactory(7, 18, 10, buyPool));
+        if (creationMethod == Method.POINT_BUY) {
+            int spinnerMinimum = 7;
+            int spinnerMaximum = 18;
+            int spinnerInitialValue = 10;
+
+            abilityScoreBuySpinners.get("str").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue, buyPool));
+            abilityScoreBuySpinners.get("con").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue, buyPool));
+            abilityScoreBuySpinners.get("dex").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue, buyPool));
+            abilityScoreBuySpinners.get("int").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue, buyPool));
+            abilityScoreBuySpinners.get("wis").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue, buyPool));
+            abilityScoreBuySpinners.get("cha").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue, buyPool));
+        } else if (creationMethod == Method.CUSTOM) {
+            int spinnerMinimum = 0;
+            int spinnerMaximum = 20;
+            int spinnerInitialValue = 10;
+
+            abilityScoreBuySpinners.get("str").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue));
+            abilityScoreBuySpinners.get("con").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue));
+            abilityScoreBuySpinners.get("dex").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue));
+            abilityScoreBuySpinners.get("int").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue));
+            abilityScoreBuySpinners.get("wis").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue));
+            abilityScoreBuySpinners.get("cha").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue));
+        }
 
         strLabel.setLabelFor(abilityScoreBuySpinners.get("str"));
         dexLabel.setLabelFor(abilityScoreBuySpinners.get("dex"));
@@ -178,7 +199,10 @@ public class CharacterCreateWindow {
         container.setSpacing(ApplicationConfig.DEFAULT_SPACING);
         container.setPadding(new Insets(ApplicationConfig.DEFAULT_PADDING));
         container.setAlignment(Pos.TOP_LEFT);
-        container.getChildren().addAll(nameBox, pointsLeftBox, abilityScoresHBox, saveHBox);
+        if (creationMethod == Method.POINT_BUY) {
+            container.getChildren().add(pointsLeftBox);
+        }
+        container.getChildren().addAll(nameBox, abilityScoresHBox, saveHBox);
         layout.getChildren().add(container);
         stage = new Stage();
         stage.setTitle("Create a character");

@@ -54,6 +54,12 @@ public class App extends Application {
             new CharacterCreateWindow(CharacterCreateWindow.Method.POINT_BUY);
         });
 
+        MenuItem customCreation = new MenuItem("Custom");
+        customCreation.setOnAction(event -> {
+            System.out.println("Custom method chosen");
+            new CharacterCreateWindow(CharacterCreateWindow.Method.CUSTOM);
+        });
+
         MenuItem loadCharacter = new MenuItem("Load Character File");
         loadCharacter.setOnAction(event -> {
             System.out.println("Load Character Button Pressed");
@@ -84,7 +90,7 @@ public class App extends Application {
         Menu fileMenu = new Menu("File");
 
         Menu characterMenu = new Menu("Create Character");
-        characterMenu.getItems().addAll(dieRollHeroic, dieRollModern, dieRollClassic, pointBuy);
+        characterMenu.getItems().addAll(dieRollHeroic, dieRollModern, dieRollClassic, pointBuy, customCreation);
 
         fileMenu.getItems().addAll(characterMenu, loadCharacter, quit);
         menuBar.getMenus().addAll(fileMenu);

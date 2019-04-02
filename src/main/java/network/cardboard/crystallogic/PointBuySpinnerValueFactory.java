@@ -10,6 +10,11 @@ public class PointBuySpinnerValueFactory extends SpinnerValueFactory.IntegerSpin
 
     public PointBuyPool pointsLeft;
 
+    public PointBuySpinnerValueFactory(int min, int max, int initialValue) {
+        super(min, max, initialValue);
+        this.pointsLeft = new PointBuyPool(10000);
+    }
+
     public PointBuySpinnerValueFactory(int min, int max, int initialValue, PointBuyPool pointsLeft) {
         super(min, max, initialValue);
         this.pointsLeft = pointsLeft;
