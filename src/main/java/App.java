@@ -81,7 +81,7 @@ public class App extends Application {
             File saveLocation = saveSelector.showOpenDialog(primaryStage);
 
             if (saveLocation != null) {
-                CharacterEditWindowSB cewsb = new CharacterEditWindowSB();
+                CharacterEditWindowSB cewsb = new CharacterEditWindowSB(saveLocation);
             }
         });
 
