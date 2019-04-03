@@ -1,3 +1,4 @@
+import FXMLControllers.CharacterEditWindowSB;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -80,7 +81,7 @@ public class App extends Application {
             File saveLocation = saveSelector.showOpenDialog(primaryStage);
 
             if (saveLocation != null) {
-                CharacterEditWindow existingCharacterEditWindow = new CharacterEditWindow(saveLocation);
+                CharacterEditWindowSB cewsb = new CharacterEditWindowSB(saveLocation);
             }
         });
 
@@ -123,8 +124,8 @@ public class App extends Application {
     }
 
     private Button rollDieWindowButton() {
-	Button btn = new Button("Roll Dice");
-	btn.setOnAction(event -> new DieRollWindow());
-	return btn;
+        Button btn = new Button("Roll Dice");
+        btn.setOnAction(event -> new DieRollWindow());
+        return btn;
     }
 }

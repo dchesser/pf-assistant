@@ -222,6 +222,7 @@ public class CharacterEditWindow {
     }
 
     /**
+     * @Deprecated
      * This method is used to save the currently open character.
      * It will, by default, remember where you last saved, or loaded from,
      * and save to that location.
@@ -248,6 +249,7 @@ public class CharacterEditWindow {
     }
 
     /**
+     * @Deprecated
      * This method is used to save the currently open character under a name that you specify.
      */
     private void saveCharacterAs() {
@@ -269,6 +271,7 @@ public class CharacterEditWindow {
     }
 
     /**
+     * @Deprecated
      * This method is used to update the saveLocation for use in SaveAs as well as first time Saves
      */
     private void updateSaveLocation() {
@@ -291,6 +294,7 @@ public class CharacterEditWindow {
     }
 
     /**
+     * @Deprecated
      * This method will save the character to the save location
      * @TODO Probably need better naming for methods
      * @TODO Refactor saving functionality into an interface the PlayerCharacter class implements
@@ -331,6 +335,7 @@ public class CharacterEditWindow {
     }
 
     /**
+     * @Deprecated
      * This is only to be called if you are loading a character from saveLocation
      * @return the character that was saved in saveLocation (null for errored)
      */
@@ -348,15 +353,15 @@ public class CharacterEditWindow {
             }
 
             // The PlayerCharacter class will return a new instance of itself after parsing the JSON file
-	    JsonNode data = new JdomParser().parse(contents);
+	        JsonNode data = new JdomParser().parse(contents);
             playerCharacter = new PlayerCharacter(data);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException i) {
             i.printStackTrace();
-	} catch (InvalidSyntaxException ise) {
-	    ise.printStackTrace();
-	}
+        } catch (InvalidSyntaxException ise) {
+            ise.printStackTrace();
+        }
     }
 }
