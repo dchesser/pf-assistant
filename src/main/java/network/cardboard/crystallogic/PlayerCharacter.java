@@ -54,6 +54,26 @@ public class PlayerCharacter
         this.name = name;
         this.abilityScores = new AbilityScores(10);
         this.skillSet = PlayerSkill.skillList();
+
+        // default values
+        this.alignment = "N (default)";
+        this.race = "Human (default)";
+        this.deity = "Some Popular God(ess) (default)";
+        this.height = "1'1\" (default)";
+        this.weight = ">1 (default)";
+        this.homeland = "Home (default)";
+        this.hairColor = "Brown-ish (default)";
+        this.eyeColor = "Brown (default)";
+        this.gender = "Person (default)";
+        this.age = ">1 (default)";
+        this.size = "M (default)";
+        this.platinumCoins = 0;
+        this.goldCoins = 0;
+        this.silverCoins = 0;
+        this.copperCoins = 0;
+        this.otherValuables = "Nothing (default)";
+        this.currHealth = 0;
+        this.maxHealth = 0;
     }
 
     public PlayerCharacter(JsonNode json)
@@ -64,6 +84,7 @@ public class PlayerCharacter
             ise.printStackTrace();
 	    }
 
+        // this is going to have to change later
 	    this.skillSet = PlayerSkill.skillList();
     }
 
@@ -71,12 +92,52 @@ public class PlayerCharacter
     {
         this.name = name;
         this.abilityScores = new AbilityScores(rolls);
+
+        // default values
+        this.alignment = "N (default)";
+        this.race = "Human (default)";
+        this.deity = "Some Popular God(ess) (default)";
+        this.height = "1'1\" (default)";
+        this.weight = ">1 (default)";
+        this.homeland = "Home (default)";
+        this.hairColor = "Brown-ish (default)";
+        this.eyeColor = "Brown (default)";
+        this.gender = "Person (default)";
+        this.age = ">1 (default)";
+        this.size = "M (default)";
+        this.platinumCoins = 0;
+        this.goldCoins = 0;
+        this.silverCoins = 0;
+        this.copperCoins = 0;
+        this.otherValuables = "Nothing (default)";
+        this.currHealth = 0;
+        this.maxHealth = 0;
     }
 
     public PlayerCharacter(String name, AbilityScores abilityScores)
     {
         this.name = name;
         this.abilityScores = abilityScores;
+
+        //default values
+        this.alignment = "N (default)";
+        this.race = "Human (default)";
+        this.deity = "Some Popular God(ess) (default)";
+        this.height = "1'1\" (default)";
+        this.weight = ">1 (default)";
+        this.homeland = "Home (default)";
+        this.hairColor = "Brown-ish (default)";
+        this.eyeColor = "Brown (default)";
+        this.gender = "Person (default)";
+        this.age = ">1 (default)";
+        this.size = "M (default)";
+        this.platinumCoins = 0;
+        this.goldCoins = 0;
+        this.silverCoins = 0;
+        this.copperCoins = 0;
+        this.otherValuables = "Nothing (default)";
+        this.currHealth = 0;
+        this.maxHealth = 0;
     }
 
     public PlayerCharacter(String name, AbilityScores abilityScores, String alignment, String race, String deity,
