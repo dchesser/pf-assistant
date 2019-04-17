@@ -1,8 +1,13 @@
 package network.cardboard.crystallogic;
 
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import argo.format.JsonFormatter;
 import argo.format.PrettyJsonFormatter;
+import argo.jdom.JsonArrayNodeBuilder;
+import argo.jdom.JsonField;
 import argo.jdom.JsonNode;
 import argo.jdom.JsonNodeBuilder;
 import argo.saj.InvalidSyntaxException;
@@ -11,6 +16,7 @@ import network.cardboard.crystallogic.AbilityScores.BuildMethod;
 
 import static argo.jdom.JsonNodeBuilders.aNumberBuilder;
 import static argo.jdom.JsonNodeBuilders.aStringBuilder;
+import static argo.jdom.JsonNodeBuilders.anArrayBuilder;
 import static argo.jdom.JsonNodeBuilders.anObjectBuilder;
 
 /**
@@ -83,9 +89,6 @@ public class PlayerCharacter
         } catch (InvalidSyntaxException ise) {
             ise.printStackTrace();
 	    }
-
-        // this is going to have to change later
-	    this.skillSet = PlayerSkill.skillList();
     }
 
     public PlayerCharacter(String name, BuildMethod rolls)
@@ -112,6 +115,7 @@ public class PlayerCharacter
         this.otherValuables = "Nothing (default)";
         this.currHealth = 0;
         this.maxHealth = 0;
+        this.skillSet = PlayerSkill.skillList();
     }
 
     public PlayerCharacter(String name, AbilityScores abilityScores)
@@ -138,13 +142,14 @@ public class PlayerCharacter
         this.otherValuables = "Nothing (default)";
         this.currHealth = 0;
         this.maxHealth = 0;
+        this.skillSet = PlayerSkill.skillList();
     }
 
     public PlayerCharacter(String name, AbilityScores abilityScores, String alignment, String race, String deity,
                            String height, String weight, String homeland, String hairColor, String eyeColor,
                            String gender, String age, String size, Integer platinumCoins, Integer goldCoins,
                            Integer silverCoins, Integer copperCoins, String otherValuables, Integer currHealth,
-                           Integer maxHealth)
+                           Integer maxHealth, HashMap<PlayerSkill.GameSkill, PlayerSkill> skillSet)
     {
         this.name = name;
         this.abilityScores = abilityScores;
@@ -166,6 +171,7 @@ public class PlayerCharacter
         this.otherValuables = otherValuables;
         this.currHealth = currHealth;
         this.maxHealth = maxHealth;
+        this.skillSet = skillSet;
     }
 
     public void parseJSON(JsonNode node) throws InvalidSyntaxException
@@ -201,6 +207,49 @@ public class PlayerCharacter
         maxHealth = Integer.parseInt(node.getNumberValue("maxHealth"));
 
         abilityScores = new AbilityScores(s, d, con, i, w, c);
+
+        // Set the skillSet map...
+        if(!node.isNode("skills"))
+        {
+            skillSet = PlayerSkill.skillList();
+        } else {
+
+            skillSet = new HashMap<>();
+
+            // Figure out wtf to do with the saved skillSet
+            List<JsonNode> skills = node.getArrayNode("skills");
+
+            GameSkill gameSkill = null;
+            PlayerSkill playerSkill;
+
+            boolean isClassSkill;
+            int ranks = 0;
+
+            for(JsonNode skill : skills)
+            {
+                isClassSkill = false;
+                ranks = 0;
+
+                List<JsonField> fields = skill.getFieldList();
+
+                for(JsonField field : fields)
+                {
+                    switch(field.getNameText())
+                    {
+                        case "name":
+                            gameSkill = PlayerSkill.getGameSkill(field.getValue().getText());
+                        case "classSkill":
+                            isClassSkill = Boolean.getBoolean(field.getValue().getText());
+                            break;
+                        case "ranks":
+                            ranks = Integer.parseInt(field.getValue().getText());
+                            break;
+                    }
+                }
+                playerSkill = new PlayerSkill(gameSkill, ranks, isClassSkill);
+                skillSet.put(gameSkill, playerSkill);
+            }
+        }
     }
 
     public String getName()
@@ -209,6 +258,12 @@ public class PlayerCharacter
     }
 
     // This toString should probably be replaced when we finish figuring out what json library should be used.
+
+    /**
+     * Method: toString()
+     * This method returns the entire character in a JSON formatted string, primarily for saving the character.
+     * @return - Returns the JSON formatted string version of the character.
+     */
     @Override
     public String toString() {
 
@@ -223,6 +278,7 @@ public class PlayerCharacter
                         .withField("WIS", aNumberBuilder("" + abilityScores.wisdom.getValue()))
                         .withField("CHA", aNumberBuilder("" + abilityScores.wisdom.getValue()))
                 )
+                .withField("skills", buildSkills())
                 .withField("alignment", aStringBuilder(alignment))
                 .withField("race", aStringBuilder(race))
                 .withField("deity", aStringBuilder(deity))
@@ -249,19 +305,38 @@ public class PlayerCharacter
         return formatter.format(json);
     }
 
+    /**
+     * Method: buildSkills()
+     * This method produces the object builder that will contain all skill information.
+     * @return - JsonObjectNodeBuilder that has all of the skills tied to the player
+     */
+    private JsonArrayNodeBuilder buildSkills()
+    {
+        JsonArrayNodeBuilder builder = anArrayBuilder();
+
+        for(Map.Entry<PlayerSkill.GameSkill, PlayerSkill> skill : skillSet.entrySet())
+        {
+            builder.withElement(skill.getValue().buildJson());
+        }
+
+        return builder;
+    }
+
     public PlayerSkill getSkill(GameSkill skill)
     {
 	    return this.skillSet.get(skill);
     }
 
+    public HashMap<GameSkill, PlayerSkill> getSkillSet() { return skillSet; }
+
     public int rollForSkill(GameSkill skill)
     {
         PlayerSkill playerSkill = this.getSkill(skill);
 
-        return Die.d20.roll() + skillBonuses(skill);
+        return Die.d20.roll() + getTotalSkillBonus(skill);
     }
 
-    private int skillBonuses(GameSkill skill)
+    public int getTotalSkillBonus(GameSkill skill)
     {
         int bonuses = 0;
         PlayerSkill playerSkill = this.getSkill(skill);

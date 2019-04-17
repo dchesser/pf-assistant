@@ -2,22 +2,111 @@ package FXMLControllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import network.cardboard.crystallogic.AbilityScores;
+import network.cardboard.crystallogic.Die;
 import network.cardboard.crystallogic.PlayerCharacter;
+import network.cardboard.crystallogic.PlayerSkill;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CharacterEditWindowController
 {
     // General Variables
     private PlayerCharacter playerCharacter;
     private File saveLocation;
+
+    // FXML Field Variables
+    @FXML
+    private TextField pcNameField;
+
+    @FXML
+    private TextField pcAlignmentField;
+
+    @FXML
+    private TextField pcRaceField;
+
+    @FXML
+    private TextField pcDeityField;
+
+    @FXML
+    private TextField pcHeightField;
+
+    @FXML
+    private TextField pcWeightField;
+
+    @FXML
+    private TextField pcHomelandField;
+
+    @FXML
+    private TextField pcHairColorField;
+
+    @FXML
+    private TextField pcEyeColorField;
+
+    @FXML
+    private TextField pcGenderField;
+
+    @FXML
+    private TextField pcAgeField;
+
+    @FXML
+    private TextField pcSizeField;
+
+    @FXML
+    private Spinner<Integer> pcStrScoreSpinner;
+
+    @FXML
+    private Spinner<Integer> pcIntScoreSpinner;
+
+    @FXML
+    private Spinner<Integer> pcDexScoreSpinner;
+
+    @FXML
+    private Spinner<Integer> pcWisScoreSpinner;
+
+    @FXML
+    private Spinner<Integer> pcConScoreSpinner;
+
+    @FXML
+    private Spinner<Integer> pcChaScoreSpinner;
+
+    @FXML
+    private Spinner<Integer> PPField;
+
+    @FXML
+    private Spinner<Integer> GPField;
+
+    @FXML
+    private Spinner<Integer> SPField;
+
+    @FXML
+    private Spinner<Integer> CPField;
+
+    @FXML
+    private TextField OtherMoneyField;
+
+    @FXML
+    private Spinner<Integer> pcCurrentHPSpinner;
+
+    @FXML
+    private Spinner<Integer> pcMaxHPSpinner;
+
+    @FXML
+    private GridPane skillGridPane;
 
     // General Methods
     public CharacterEditWindowController()
@@ -36,6 +125,7 @@ public class CharacterEditWindowController
             pcNameField.setText("Default Character");
         }
 
+        // Set the ability scores to their correct values if there are any
         if(pc.abilityScores != null) {
             pcStrScoreSpinner.increment(pc.abilityScores.strength.getValue());
 
@@ -48,7 +138,7 @@ public class CharacterEditWindowController
             pcWisScoreSpinner.increment(pc.abilityScores.wisdom.getValue());
 
             pcChaScoreSpinner.increment(pc.abilityScores.charisma.getValue());
-        } else {
+        } else { // Otherwise set the defaults (10)
             pcStrScoreSpinner.increment(10);
 
             pcDexScoreSpinner.increment(10);
@@ -62,6 +152,7 @@ public class CharacterEditWindowController
             pcChaScoreSpinner.increment(10);
         }
 
+        // Detect these traits for nulls, and set to default if they are null.
         if(pc.getAlignment() != null) {
             pcAlignmentField.setText(pc.getAlignment());
         } else {
@@ -145,6 +236,7 @@ public class CharacterEditWindowController
             CPField.increment(pc.getCopperCoins());
         }
 
+        // Not 0 default, but still in the valuables section.
         if(pc.getOtherValuables() != null) {
             OtherMoneyField.setText(pc.getOtherValuables());
         } else {
@@ -158,8 +250,125 @@ public class CharacterEditWindowController
         if(pc.getMaxHealth() != null) {
             pcMaxHPSpinner.increment(pc.getMaxHealth());
         }
+
+
+        // Retrieve and setup Skills from the player for display
+        int currRowCount = 1;
+        for(Map.Entry<PlayerSkill.GameSkill, PlayerSkill> entry : pc.getSkillSet().entrySet())
+        {
+            // add a skill rank display row for the given name and rank.
+            addSkillDisplayRow(entry, currRowCount);
+            currRowCount++;
+        }
     }
 
+    /** @TODO Possibly relocate to a new object?  Also finish all parts' functions.
+     * Method: addSkillDisplayRow()
+     * This method adds a row to the GridPane that is used to display Player Skills.
+     * It is required to generate these programmatically,
+     * as we need them to each have unique functions based on their assigned skills.
+     */
+    private void addSkillDisplayRow(Map.Entry<PlayerSkill.GameSkill, PlayerSkill> skill, int currRowCount)
+    {
+        // Build the new row's contents (the row will be added at the end in case something errors)
+
+        // Total Mod
+        Label totalMod = new Label("Default Text, it broke?");
+        // retrieve the total modifier
+        totalMod.setText(playerCharacter.getTotalSkillBonus(skill.getKey()) + "");
+
+
+        // Build the spinner for the ranks of the skill
+        Spinner<Integer> ranks = new Spinner<>();
+
+        // Define the values allowed in spinners using this factory
+        SpinnerValueFactory<Integer> valueFactory =
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 50, 0);
+
+        // add a converter to allow people to edit the spinner directly
+        // Do I need this?
+
+        // set the factory and increment to the current player ranks.
+        // current ranks SHOULD default to 0 if there are none, leaving the default at 0
+        ranks.setValueFactory(valueFactory);
+        ranks.increment(skill.getValue().getRanks());
+
+
+        // Add  the class skill checkbox
+        CheckBox classSkillCB = new CheckBox();
+        classSkillCB.setSelected(skill.getValue().isClassSkill());
+
+
+        // Button for opening the roll window.
+        Button rollSkillBtn = new Button(skill.getKey().getName());
+        rollSkillBtn.setMinWidth(100);
+
+        rollSkillBtn.setOnAction(event ->
+        {
+            // @TODO Open the roll window with a D20 and a modifier of the ranks + Ability Modifier
+            // Total Modifier Value = Integer.parseInt(totalMod.getText());
+
+            // Roll simulation without actually opening the window.
+            System.out.println();
+            System.out.println("Rolling Skill: " + skill.getKey().getName());
+            System.out.println("Rolling d20 + " + Integer.parseInt(totalMod.getText()));
+            System.out.println("Rolled: " + (Die.d20.roll() + Integer.parseInt(totalMod.getText())));
+        });
+
+        // Create the listeners for the objects
+        // Set the function that occurs on update of the spinner
+        ranks.valueProperty().addListener(((observable, oldValue, newValue) ->
+        {
+            // @TODO Handle listening event (re-calculate total mod
+//            System.out.println("\nValue Change Detected in Ranks of " + skill.getKey().getName());
+//            System.out.println("Value changed from " + oldValue + " to " + newValue);
+            if(classSkillCB.isSelected())
+            {
+                if(oldValue == 0 && newValue > 0)
+                {
+                    totalMod.setText("" + (Integer.parseInt(totalMod.getText()) + 3 + newValue));
+                }
+                else if(newValue == 0 && oldValue > 0)
+                {
+                    totalMod.setText("" + (Integer.parseInt(totalMod.getText()) - 3 - oldValue));
+                }
+                else
+                {
+                    totalMod.setText("" + (Integer.parseInt(totalMod.getText()) + (newValue - oldValue)));
+                }
+            }
+            else {
+                totalMod.setText("" + (Integer.parseInt(totalMod.getText()) + (newValue - oldValue)));
+            }
+        }));
+
+        classSkillCB.setOnAction(event ->
+        {
+//            System.out.println("\n Change Detected in Class Skill status of " + skill.getKey().getName());
+//            System.out.println("Updated to: " + classSkillCB.isSelected());
+            if(ranks.getValue() > 0) // Class bonus only applies if you have at least one rank
+            {
+                if(classSkillCB.isSelected())
+                {
+                    totalMod.setText("" + (Integer.parseInt(totalMod.getText()) + 3));
+                }
+                else {
+                    totalMod.setText("" + (Integer.parseInt(totalMod.getText()) - 3));
+                }
+            }
+
+        });
+
+        // add onto the GridPane
+        skillGridPane.addRow(currRowCount, rollSkillBtn, classSkillCB, totalMod, ranks);
+    }
+
+    /**
+     * Method: setSaveLocation(File)
+     * This method sets the file location where the program is meant to save the character.
+     * It is necessary so that the save vs save as functions can maintain their proper function.
+     * @param saveLocation - The location that the program is meant to save to.
+     */
     public void setSaveLocation(File saveLocation)
     {
         this.saveLocation = saveLocation;
@@ -182,6 +391,25 @@ public class CharacterEditWindowController
                 pcChaScoreSpinner.getValue()
         );
 
+        // Setup the new SkillSet
+        HashMap<PlayerSkill.GameSkill, PlayerSkill> newSkillSet = new HashMap<>();
+
+        // Read through all of the GridPane's children and figure out wtf is going on
+        for(int i = 5; i < skillGridPane.getChildren().size(); i+=4)
+        {
+
+            String skillName = ((Button)skillGridPane.getChildren().get(i)).getText();
+            boolean isClassSkill = ((CheckBox)skillGridPane.getChildren().get(i+1)).isSelected();
+            // totalMod is unnecessary ((Label)skillGridPane.getChildren().get(i+2)).getText();
+            int ranks = ((Spinner<Integer>)skillGridPane.getChildren().get(i+3)).getValue();
+
+            if(PlayerSkill.getGameSkill(skillName) != null) {
+                PlayerSkill skill = new PlayerSkill(PlayerSkill.getGameSkill(skillName), ranks, isClassSkill);
+                newSkillSet.put(PlayerSkill.getGameSkill(skillName), skill);
+            }
+        }
+
+        // Create the new player with the given information.
         playerCharacter = new PlayerCharacter(pcNameField.getText(),
                 newAbilities,
                 pcAlignmentField.getText(),
@@ -201,10 +429,9 @@ public class CharacterEditWindowController
                 CPField.getValue(),
                 OtherMoneyField.getText(),
                 pcCurrentHPSpinner.getValue(),
-                pcMaxHPSpinner.getValue()
+                pcMaxHPSpinner.getValue(),
+                newSkillSet
         );
-
-
     }
 
     /**
@@ -249,82 +476,6 @@ public class CharacterEditWindowController
             e.printStackTrace();
         }
     }
-
-    // FXML Field Variables
-    @FXML
-    private TextField pcNameField;
-
-    @FXML
-    private TextField pcAlignmentField;
-
-    @FXML
-    private TextField pcRaceField;
-
-    @FXML
-    private TextField pcDeityField;
-
-    @FXML
-    private TextField pcHeightField;
-
-    @FXML
-    private TextField pcWeightField;
-
-    @FXML
-    private TextField pcHomelandField;
-
-    @FXML
-    private TextField pcHairColorField;
-
-    @FXML
-    private TextField pcEyeColorField;
-
-    @FXML
-    private TextField pcGenderField;
-
-    @FXML
-    private TextField pcAgeField;
-
-    @FXML
-    private TextField pcSizeField;
-
-    @FXML
-    private Spinner<Integer> pcStrScoreSpinner;
-
-    @FXML
-    private Spinner<Integer> pcIntScoreSpinner;
-
-    @FXML
-    private Spinner<Integer> pcDexScoreSpinner;
-
-    @FXML
-    private Spinner<Integer> pcWisScoreSpinner;
-
-    @FXML
-    private Spinner<Integer> pcConScoreSpinner;
-
-    @FXML
-    private Spinner<Integer> pcChaScoreSpinner;
-
-    @FXML
-    private Spinner<Integer> PPField;
-
-    @FXML
-    private Spinner<Integer> GPField;
-
-    @FXML
-    private Spinner<Integer> SPField;
-
-    @FXML
-    private Spinner<Integer> CPField;
-
-    @FXML
-    private TextField OtherMoneyField;
-
-    @FXML
-    private Spinner<Integer> pcCurrentHPSpinner;
-
-    @FXML
-    private Spinner<Integer> pcMaxHPSpinner;
 
     // FXML Actions
     @FXML

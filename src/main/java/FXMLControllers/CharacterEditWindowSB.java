@@ -53,6 +53,7 @@ public class CharacterEditWindowSB {
 
             Scene scene = new Scene(root);
             stage.setScene(scene);
+            stage.setTitle(playerCharacter.getName());
             stage.show();
 
         } catch (IOException e) {
