@@ -2,6 +2,7 @@ package FXMLControllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
@@ -158,6 +159,8 @@ public class CharacterEditWindowController
         if(pc.getMaxHealth() != null) {
             pcMaxHPSpinner.increment(pc.getMaxHealth());
         }
+
+        sbMenuBar.setUseSystemMenuBar(true);
     }
 
     public void setSaveLocation(File saveLocation)
@@ -325,6 +328,9 @@ public class CharacterEditWindowController
 
     @FXML
     private Spinner<Integer> pcMaxHPSpinner;
+
+    @FXML
+    private MenuBar sbMenuBar;
 
     // FXML Actions
     @FXML
