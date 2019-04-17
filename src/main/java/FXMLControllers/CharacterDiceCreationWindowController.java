@@ -5,12 +5,14 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import network.cardboard.crystallogic.AbilityScores;
 import network.cardboard.crystallogic.Die;
 import network.cardboard.crystallogic.PlayerCharacter;
+import network.cardboard.crystallogic.PlayerSkill;
 
 import java.io.File;
 import java.io.IOException;
@@ -100,6 +102,24 @@ public class CharacterDiceCreationWindowController {
                 scoreRolls.get(pcChaScoreSpinner.getValue())
         );
 
+        // Setup the new SkillSet
+        HashMap<PlayerSkill.GameSkill, PlayerSkill> newSkillSet = new HashMap<>();
+
+        // Read through all of the GridPane's children and figure out wtf is going on
+        for(int i = 5; i < skillGridPane.getChildren().size(); i+=4)
+        {
+
+            String skillName = ((Button)skillGridPane.getChildren().get(i)).getText();
+            boolean isClassSkill = ((CheckBox)skillGridPane.getChildren().get(i+1)).isSelected();
+            // totalMod is unnecessary ((Label)skillGridPane.getChildren().get(i+2)).getText();
+            int ranks = ((Spinner<Integer>)skillGridPane.getChildren().get(i+3)).getValue();
+
+            if(PlayerSkill.getGameSkill(skillName) != null) {
+                PlayerSkill skill = new PlayerSkill(PlayerSkill.getGameSkill(skillName), ranks, isClassSkill);
+                newSkillSet.put(PlayerSkill.getGameSkill(skillName), skill);
+            }
+        }
+
         playerCharacter = new PlayerCharacter(pcNameField.getText(),
                 newAbilities,
                 pcAlignmentField.getText(),
@@ -119,7 +139,8 @@ public class CharacterDiceCreationWindowController {
                 CPField.getValue(),
                 OtherMoneyField.getText(),
                 pcCurrentHPSpinner.getValue(),
-                pcMaxHPSpinner.getValue()
+                pcMaxHPSpinner.getValue(),
+                newSkillSet
         );
 
 
@@ -356,6 +377,9 @@ public class CharacterDiceCreationWindowController {
 
     @FXML
     private Spinner<Integer> pcMaxHPSpinner;
+
+    @FXML
+    private GridPane skillGridPane;
 
     @FXML
     private MenuBar sbMenuBar;
