@@ -3,12 +3,7 @@ package FXMLControllers;
 import NonFXMLWindows.DieRollWindow;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -108,6 +103,9 @@ public class CharacterEditWindowController
     @FXML
     private GridPane skillGridPane;
 
+    @FXML
+    private MenuBar sbMenuBar;
+
     // General Methods
     public CharacterEditWindowController()
     {
@@ -117,6 +115,8 @@ public class CharacterEditWindowController
     public void setCharacter(PlayerCharacter pc)
     {
         playerCharacter = pc;
+
+        sbMenuBar.setUseSystemMenuBar(true);
 
         // Lots and lots of null checks to see if I can even load the data (makes things more reverse compatible save-wise(
         if(pc.getName() != null) {
