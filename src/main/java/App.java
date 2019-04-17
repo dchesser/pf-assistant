@@ -1,4 +1,5 @@
 import FXMLControllers.CharacterEditWindowSB;
+import NonFXMLWindows.DieRollWindow;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -63,7 +64,6 @@ public class App extends Application {
 
         MenuItem loadCharacter = new MenuItem("Load Character File");
         loadCharacter.setOnAction(event -> {
-            System.out.println("Load Character Button Pressed");
             // if the default save directory doesn't exist, make it.
             File saveDirectory = new File("saves");
             if(!saveDirectory.exists()) {
