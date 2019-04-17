@@ -143,7 +143,7 @@ public class CharacterDiceCreationWindowController {
                 newSkillSet
         );
 
-
+        sbMenuBar.setUseSystemMenuBar(true);
     }
 
     /**
