@@ -1,8 +1,8 @@
 package FXMLControllers;
 
+import NonFXMLWindows.DieRollWindow;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -305,14 +305,7 @@ public class CharacterEditWindowController
 
         rollSkillBtn.setOnAction(event ->
         {
-            // @TODO Open the roll window with a D20 and a modifier of the ranks + Ability Modifier
-            // Total Modifier Value = Integer.parseInt(totalMod.getText());
-
-            // Roll simulation without actually opening the window.
-            System.out.println();
-            System.out.println("Rolling Skill: " + skill.getKey().getName());
-            System.out.println("Rolling d20 + " + Integer.parseInt(totalMod.getText()));
-            System.out.println("Rolled: " + (Die.d20.roll() + Integer.parseInt(totalMod.getText())));
+            new DieRollWindow(Die.d20, 1, 0,Integer.parseInt(totalMod.getText()));
         });
 
         // Create the listeners for the objects
