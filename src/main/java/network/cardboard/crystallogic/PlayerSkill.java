@@ -1,7 +1,12 @@
 package network.cardboard.crystallogic;
 
 import java.util.HashMap;
+
+import argo.jdom.JsonObjectNodeBuilder;
 import network.cardboard.crystallogic.AbilityScores.Ability;
+
+import static argo.jdom.JsonNodeBuilders.aStringBuilder;
+import static argo.jdom.JsonNodeBuilders.anObjectBuilder;
 
 /**
  * Skills in Pathfinder are important to get anything done.
@@ -26,63 +31,63 @@ import network.cardboard.crystallogic.AbilityScores.Ability;
 public class PlayerSkill
 {
     public static enum GameSkill {
-	// SkillName(Ability.XXX, trainingRequired)
-	Acrobatics(Ability.DEX, false),
-	Appraise(Ability.INT, false),
-	Bluff(Ability.CHA, false),
-	Climb(Ability.STR, false),
-	Craft(Ability.INT, false),
-	Diplomacy(Ability.CHA, false),
-	DisableDevice(Ability.DEX, true),
-	Disguise(Ability.CHA, false),
-	EscapeArtist(Ability.DEX, false),
-	Fly(Ability.DEX, false),
-	HandleAnimal(Ability.CHA, true),
-	Heal(Ability.WIS, false),
-	Intimidate(Ability.CHA, false),
-	KnowledgeArcana(Ability.INT, true),
-	KnowledgeDungeoneering(Ability.INT, true),
-	KnowledgeEngineering(Ability.INT, true),
-	KnowledgeGeography(Ability.INT, true),
-	KnowledgeHistory(Ability.INT, true),
-	KnowledgeLocal(Ability.INT, true),
-	KnowledgeNature(Ability.INT, true),
-	KnowledgeNobility(Ability.INT, true),
-	KnowledgePlanes(Ability.INT, true),
-	KnowledgeReligion(Ability.INT, true),
-	Linguistics(Ability.INT, true),
-	Perception(Ability.WIS, false),
-	Perform(Ability.CHA, false),
-	Profession(Ability.WIS, true),
-	Ride(Ability.DEX, false),
-	SenseMotive(Ability.WIS, false),
-	SleightOfHand(Ability.DEX, true),
-	Spellcraft(Ability.INT, true),
-	Stealth(Ability.DEX, false),
-	Survival(Ability.WIS, false),
-	Swim(Ability.STR, false),
-	UseMagicDevice(Ability.CHA, true);
+		// SkillName(Ability.XXX, trainingRequired)
+		Acrobatics(Ability.DEX, false),
+		Appraise(Ability.INT, false),
+		Bluff(Ability.CHA, false),
+		Climb(Ability.STR, false),
+		Craft(Ability.INT, false),
+		Diplomacy(Ability.CHA, false),
+		DisableDevice(Ability.DEX, true),
+		Disguise(Ability.CHA, false),
+		EscapeArtist(Ability.DEX, false),
+		Fly(Ability.DEX, false),
+		HandleAnimal(Ability.CHA, true),
+		Heal(Ability.WIS, false),
+		Intimidate(Ability.CHA, false),
+		KnowledgeArcana(Ability.INT, true),
+		KnowledgeDungeoneering(Ability.INT, true),
+		KnowledgeEngineering(Ability.INT, true),
+		KnowledgeGeography(Ability.INT, true),
+		KnowledgeHistory(Ability.INT, true),
+		KnowledgeLocal(Ability.INT, true),
+		KnowledgeNature(Ability.INT, true),
+		KnowledgeNobility(Ability.INT, true),
+		KnowledgePlanes(Ability.INT, true),
+		KnowledgeReligion(Ability.INT, true),
+		Linguistics(Ability.INT, true),
+		Perception(Ability.WIS, false),
+		Perform(Ability.CHA, false),
+		Profession(Ability.WIS, true),
+		Ride(Ability.DEX, false),
+		SenseMotive(Ability.WIS, false),
+		SleightOfHand(Ability.DEX, true),
+		Spellcraft(Ability.INT, true),
+		Stealth(Ability.DEX, false),
+		Survival(Ability.WIS, false),
+		Swim(Ability.STR, false),
+		UseMagicDevice(Ability.CHA, true);
 
-	private final Ability abilityUsed;
-	private final boolean isTrainingRequired;
+		private final Ability abilityUsed;
+		private final boolean isTrainingRequired;
 
-	GameSkill(Ability abilityUsed, boolean isTrainingRequired)
-	{
-	    this.abilityUsed = abilityUsed;
-	    this.isTrainingRequired = isTrainingRequired;
-	}
+		GameSkill(Ability abilityUsed, boolean isTrainingRequired)
+		{
+			this.abilityUsed = abilityUsed;
+			this.isTrainingRequired = isTrainingRequired;
+		}
 
-	private Ability basedOnAbility()
-	{
-	    return this.abilityUsed;
-	}
+		private Ability basedOnAbility()
+		{
+			return this.abilityUsed;
+		}
 
-	private boolean isTrainingRequired()
-	{
-	    return this.isTrainingRequired;
-	}
+		private boolean isTrainingRequired()
+		{
+			return this.isTrainingRequired;
+		}
 
-	public String getName()
+		public String getName()
 	{
 	    return this.toString().replaceAll("(\\p{Upper})", " $1").trim();
 	}
@@ -94,21 +99,49 @@ public class PlayerSkill
 
     public PlayerSkill(GameSkill skill)
     {
-	this.skill = skill;
-	this.ranks = 0;
-	this.isClassSkill = false;
+		this.skill = skill;
+		this.ranks = 0;
+		this.isClassSkill = false;
     }
+
+    public PlayerSkill(GameSkill skill, int ranks, boolean isClassSkill)
+	{
+		// @TODO Add a way to find a skill from a string
+		this.skill = skill;
+		this.ranks = ranks;
+		this.isClassSkill = isClassSkill;
+	}
 
     public static HashMap<GameSkill, PlayerSkill> skillList()
     {
-	HashMap skillSet = new HashMap<GameSkill, PlayerSkill>();
+		HashMap skillSet = new HashMap<GameSkill, PlayerSkill>();
 
-	for (GameSkill s : GameSkill.values()) {
-	    skillSet.put(s, new PlayerSkill(s));
-	}
+		for (GameSkill s : GameSkill.values()) {
+			skillSet.put(s, new PlayerSkill(s));
+		}
 
-	return skillSet;
+		return skillSet;
     }
+
+	/**
+	 * Method: getGameSkill
+	 * This method goes through the GameSkill enum for a value of the matching name and returns it
+	 * This mainly exists so that a new PlayerSkills can be generated for correct skill values
+	 * @param skillName - The name of the skill.  Remember that there should be no spaces!
+	 * @return The enum of the matching skill.  This is null if there was no skill found that matched.
+	 */
+	public static GameSkill getGameSkill(String skillName)
+	{
+		GameSkill output = null;
+		for (GameSkill skill : GameSkill.values()) {
+			if(skill.getName().equals(skillName))
+			{
+				output = skill;
+				break;
+			}
+		}
+		return output;
+	}
 
     public String getName()
     {
@@ -127,8 +160,8 @@ public class PlayerSkill
 
     public int addRanks(int ranks)
     {
-	this.ranks += ranks;
-	return this.getRanks();
+		this.ranks += ranks;
+		return this.getRanks();
     }
 
     public int getRanks()
@@ -165,4 +198,22 @@ public class PlayerSkill
     {
 	return this.skill.basedOnAbility() == Ability.CHA;
     }
+
+	/**
+	 * Method: buildJson()
+	 * This method creates a JsonObjectNodeBuilder that can be used to output json formatted text.
+	 * It is meant to be used by a parent builder, so that it can be more abstracted.
+	 * It also allows us to save this as json wherever we may need to.
+	 * @return
+	 */
+	public JsonObjectNodeBuilder buildJson()
+	{
+		JsonObjectNodeBuilder builder = anObjectBuilder();
+
+		builder.withField("name", aStringBuilder(skill.getName()))
+				.withField("classSkill", aStringBuilder(isClassSkill + ""))
+				.withField("ranks", aStringBuilder(ranks + ""));
+
+		return builder;
+	}
 }
