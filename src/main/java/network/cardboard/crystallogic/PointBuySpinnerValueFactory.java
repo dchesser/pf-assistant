@@ -1,5 +1,6 @@
 package network.cardboard.crystallogic;
 
+import javafx.beans.NamedArg;
 import javafx.scene.control.SpinnerValueFactory;
 
 /**
@@ -10,7 +11,7 @@ public class PointBuySpinnerValueFactory extends SpinnerValueFactory.IntegerSpin
 
     public PointBuyPool pointsLeft;
 
-    public PointBuySpinnerValueFactory(int min, int max, int initialValue) {
+    public PointBuySpinnerValueFactory(@NamedArg("min") int min, @NamedArg("max") int max, @NamedArg("initialValue") int initialValue) {
         super(min, max, initialValue);
         this.pointsLeft = new PointBuyPool(10000);
     }

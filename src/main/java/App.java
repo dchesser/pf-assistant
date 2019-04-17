@@ -1,3 +1,4 @@
+import FXMLControllers.CharacterCreationSB;
 import FXMLControllers.CharacterEditWindowSB;
 import NonFXMLWindows.DieRollWindow;
 import javafx.application.Application;
@@ -35,19 +36,19 @@ public class App extends Application {
         MenuItem dieRollHeroic = new MenuItem("Dice Roll - Heroic");
         dieRollHeroic.setOnAction(event -> {
             System.out.println("Create Heroic Method button pressed");
-            new CharacterCreateWindow(CharacterCreateWindow.Method.HEROIC);
+            CharacterCreationSB creationSB = new CharacterCreationSB(CharacterCreationSB.CreationMethod.HEROIC);
         });
 
         MenuItem dieRollModern = new MenuItem("Dice Roll - Modern");
         dieRollModern.setOnAction(event -> {
             System.out.println("Create Modern Method button pressed");
-            new CharacterCreateWindow(CharacterCreateWindow.Method.MODERN);
+            CharacterCreationSB creationSB = new CharacterCreationSB(CharacterCreationSB.CreationMethod.MODERN);
         });
 
         MenuItem dieRollClassic = new MenuItem("Dice Roll - Classic");
         dieRollClassic.setOnAction(event -> {
             System.out.println("Create Classic Method button pressed");
-            new CharacterCreateWindow(CharacterCreateWindow.Method.CLASSIC);
+            CharacterCreationSB creationSB = new CharacterCreationSB(CharacterCreationSB.CreationMethod.CLASSIC);
         });
 
         MenuItem pointBuy = new MenuItem("Point Buy");
