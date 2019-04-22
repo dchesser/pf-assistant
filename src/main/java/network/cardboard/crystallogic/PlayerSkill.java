@@ -77,7 +77,7 @@ public class PlayerSkill
 			this.isTrainingRequired = isTrainingRequired;
 		}
 
-		private Ability basedOnAbility()
+		public Ability basedOnAbility()
 		{
 			return this.abilityUsed;
 		}

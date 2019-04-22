@@ -15,6 +15,7 @@ import network.cardboard.crystallogic.PlayerSkill;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +24,15 @@ public class CharacterEditWindowController
     // General Variables
     private PlayerCharacter playerCharacter;
     private File saveLocation;
+
+    // Display Assisting variables
+    private ArrayList<SkillDisplay> strengthSkills;
+    private ArrayList<SkillDisplay> dexteritySkills;
+    private ArrayList<SkillDisplay> constitutionSkills;
+    private ArrayList<SkillDisplay> intelligenceSkills;
+    private ArrayList<SkillDisplay> wisdomSkills;
+    private ArrayList<SkillDisplay> charismaSkills;
+
 
     // FXML Field Variables
     @FXML
@@ -118,6 +128,13 @@ public class CharacterEditWindowController
 
         sbMenuBar.setUseSystemMenuBar(true);
 
+        strengthSkills = new ArrayList<>();
+        dexteritySkills = new ArrayList<>();
+        constitutionSkills = new ArrayList<>();
+        intelligenceSkills = new ArrayList<>();
+        wisdomSkills = new ArrayList<>();
+        charismaSkills = new ArrayList<>();
+
         // Lots and lots of null checks to see if I can even load the data (makes things more reverse compatible save-wise(
         if(pc.getName() != null) {
             pcNameField.setText(pc.getName());
@@ -151,6 +168,38 @@ public class CharacterEditWindowController
 
             pcChaScoreSpinner.increment(10);
         }
+
+        // Set the onUpdate for the spinners so that they update the skill rows.
+        pcStrScoreSpinner.valueProperty().addListener(
+                observable -> {
+                    updateAll(AbilityScores.Ability.STR);
+                }
+        );
+        pcDexScoreSpinner.valueProperty().addListener(
+                observable -> {
+                    updateAll(AbilityScores.Ability.DEX);
+                }
+        );
+        pcConScoreSpinner.valueProperty().addListener(
+                observable -> {
+                    updateAll(AbilityScores.Ability.CON);
+                }
+        );
+        pcIntScoreSpinner.valueProperty().addListener(
+                observable -> {
+                    updateAll(AbilityScores.Ability.INT);
+                }
+        );
+        pcWisScoreSpinner.valueProperty().addListener(
+                observable -> {
+                    updateAll(AbilityScores.Ability.WIS);
+                }
+        );
+        pcChaScoreSpinner.valueProperty().addListener(
+                observable -> {
+                    updateAll(AbilityScores.Ability.CHA);
+                }
+        );
 
         // Detect these traits for nulls, and set to default if they are null.
         if(pc.getAlignment() != null) {
@@ -262,6 +311,87 @@ public class CharacterEditWindowController
         }
     }
 
+    /**
+     * Method: updateAll(Ability)
+     * This method causes all skills of the designated ability to be updated on their displays.
+     * Most often due to a change in an ability score associated with the skill.
+     * @param ability - The ability type to be updated.
+     */
+    private void updateAll(AbilityScores.Ability ability)
+    {
+        if(ability.equals(AbilityScores.Ability.STR))
+        {
+            for(SkillDisplay skill : strengthSkills)
+            {
+                if(skill.classSkill.isSelected() && skill.ranks.getValue() > 0) {
+                    skill.modDisplay.setText("" + ( skill.ranks.getValue() + 3 + ( pcStrScoreSpinner.getValue() / 2 ) - 5 ) );
+                }
+                else {
+                    skill.modDisplay.setText("" + ( skill.ranks.getValue() + ( pcStrScoreSpinner.getValue() / 2 ) - 5 ) );
+                }
+            }
+        }
+        else if(ability.equals(AbilityScores.Ability.DEX))
+        {
+            for(SkillDisplay skill : dexteritySkills)
+            {
+                if(skill.classSkill.isSelected() && skill.ranks.getValue() > 0) {
+                    skill.modDisplay.setText("" + ( skill.ranks.getValue() + 3 + ( pcDexScoreSpinner.getValue() / 2 ) - 5 ) );
+                }
+                else {
+                    skill.modDisplay.setText("" + ( skill.ranks.getValue() + ( pcDexScoreSpinner.getValue() / 2 ) - 5 ) );
+                }
+            }
+        }
+        else if(ability.equals(AbilityScores.Ability.CON))
+        {
+            for(SkillDisplay skill : constitutionSkills)
+            {
+                if(skill.classSkill.isSelected() && skill.ranks.getValue() > 0) {
+                    skill.modDisplay.setText("" + ( skill.ranks.getValue() + 3 + ( pcConScoreSpinner.getValue() / 2 ) - 5 ) );
+                }
+                else {
+                    skill.modDisplay.setText("" + ( skill.ranks.getValue() + ( pcConScoreSpinner.getValue() / 2 ) - 5 ) );
+                }
+            }
+        }
+        else if(ability.equals(AbilityScores.Ability.INT))
+        {
+            for(SkillDisplay skill : intelligenceSkills)
+            {
+                if(skill.classSkill.isSelected() && skill.ranks.getValue() > 0) {
+                    skill.modDisplay.setText("" + ( skill.ranks.getValue() + 3 + ( pcIntScoreSpinner.getValue() / 2 ) - 5 ) );
+                }
+                else {
+                    skill.modDisplay.setText("" + ( skill.ranks.getValue() + ( pcIntScoreSpinner.getValue() / 2 ) - 5 ) );
+                }
+            }
+        }
+        else if(ability.equals(AbilityScores.Ability.WIS))
+        {
+            for(SkillDisplay skill : wisdomSkills)
+            {
+                if(skill.classSkill.isSelected() && skill.ranks.getValue() > 0) {
+                    skill.modDisplay.setText("" + ( skill.ranks.getValue() + 3 + ( pcWisScoreSpinner.getValue() / 2 ) - 5 ) );
+                }
+                else {
+                    skill.modDisplay.setText("" + ( skill.ranks.getValue() + ( pcWisScoreSpinner.getValue() / 2 ) - 5 ) );
+                }
+            }
+        }
+        else {
+            for(SkillDisplay skill : charismaSkills)
+            {
+                if(skill.classSkill.isSelected() && skill.ranks.getValue() > 0) {
+                    skill.modDisplay.setText("" + ( skill.ranks.getValue() + 3 + ( pcChaScoreSpinner.getValue() / 2 ) - 5 ) );
+                }
+                else {
+                    skill.modDisplay.setText("" + ( skill.ranks.getValue() + ( pcChaScoreSpinner.getValue() / 2 ) - 5 ) );
+                }
+            }
+        }
+    }
+
     /** @TODO Possibly relocate to a new object?  Also finish all parts' functions.
      * Method: addSkillDisplayRow()
      * This method adds a row to the GridPane that is used to display Player Skills.
@@ -296,7 +426,7 @@ public class CharacterEditWindowController
 
         // Add  the class skill checkbox
         CheckBox classSkillCB = new CheckBox();
-        classSkillCB.setSelected(skill.getValue().isClassSkill());
+        classSkillCB.setSelected(skill.getValue().isClassSkill()); //@TODO Figure out wtf is going wrong with this line.
 
 
         // Button for opening the roll window.
@@ -312,9 +442,13 @@ public class CharacterEditWindowController
         // Set the function that occurs on update of the spinner
         ranks.valueProperty().addListener(((observable, oldValue, newValue) ->
         {
-            // @TODO Handle listening event (re-calculate total mod
-//            System.out.println("\nValue Change Detected in Ranks of " + skill.getKey().getName());
-//            System.out.println("Value changed from " + oldValue + " to " + newValue);
+            totalMod.setText("" +
+                    getTotalMod(ranks.getValue(),
+                            classSkillCB.isSelected(),
+                            skill.getKey().basedOnAbility()
+                    )
+            );
+            /*
             if(classSkillCB.isSelected())
             {
                 if(oldValue == 0 && newValue > 0)
@@ -333,12 +467,13 @@ public class CharacterEditWindowController
             else {
                 totalMod.setText("" + (Integer.parseInt(totalMod.getText()) + (newValue - oldValue)));
             }
+            */
         }));
 
         classSkillCB.setOnAction(event ->
         {
-//            System.out.println("\n Change Detected in Class Skill status of " + skill.getKey().getName());
-//            System.out.println("Updated to: " + classSkillCB.isSelected());
+            totalMod.setText("" + getTotalMod(ranks.getValue(), classSkillCB.isSelected(), skill.getKey().basedOnAbility()));
+            /*
             if(ranks.getValue() > 0) // Class bonus only applies if you have at least one rank
             {
                 if(classSkillCB.isSelected())
@@ -349,11 +484,122 @@ public class CharacterEditWindowController
                     totalMod.setText("" + (Integer.parseInt(totalMod.getText()) - 3));
                 }
             }
+            */
 
         });
 
+        saveSkillDisplay(
+                new SkillDisplay(totalMod, ranks, classSkillCB),
+                skill.getKey().basedOnAbility()
+        );
         // add onto the GridPane
         skillGridPane.addRow(currRowCount, rollSkillBtn, classSkillCB, totalMod, ranks);
+    }
+
+    /**
+     * Method: saveSkillDisplay(SkillDisplay, Ability)
+     * This method is used to save the display controls of each skill to their respective lists for updating.
+     * This is primarily for the use with the Ability Score spinners update functions to interact with the
+     * dynamically created skill display rows.
+     * @param display - The object storing references to the display controls
+     * @param ability - The associated ability for the skill being saved.
+     */
+    private void saveSkillDisplay(SkillDisplay display, AbilityScores.Ability ability) 
+    {
+        if(ability.equals(AbilityScores.Ability.STR))
+        {
+            strengthSkills.add(display);
+        }
+        else if(ability.equals(AbilityScores.Ability.DEX))
+        {
+            dexteritySkills.add(display);
+        }
+        else if(ability.equals(AbilityScores.Ability.CON))
+        {
+            constitutionSkills.add(display);
+        }
+        else if(ability.equals(AbilityScores.Ability.INT))
+        {
+            intelligenceSkills.add(display);
+        }
+        else if(ability.equals(AbilityScores.Ability.WIS))
+        {
+            wisdomSkills.add(display);
+        }
+        else
+        {
+            charismaSkills.add(display);
+        }
+    }
+
+    /**
+     * Method: getTotalMod()
+     * This method retrieves the totalMod value for the purposes of calculating skills.
+     * It requires the identifier for the score involved with the calculation.
+     * @return - int TotalMod - This is the total calculated modifier for the skill selected.
+     */
+    private int getTotalMod(int ranks, boolean classSkill, AbilityScores.Ability basedOn)
+    {
+        if(basedOn.equals(AbilityScores.Ability.STR))
+        {
+            if(ranks > 0 && classSkill)
+            {
+                return ranks + 3 + ((pcStrScoreSpinner.getValue()/2)-5);
+            }
+            else {
+                return ranks + ((pcStrScoreSpinner.getValue()/2)-5);
+            }
+        }
+        else if(basedOn.equals(AbilityScores.Ability.DEX))
+        {
+            if(ranks > 0 && classSkill)
+            {
+                return ranks + 3 + ((pcDexScoreSpinner.getValue()/2)-5);
+            }
+            else {
+                return ranks + ((pcDexScoreSpinner.getValue()/2)-5);
+            }
+        }
+        else if(basedOn.equals(AbilityScores.Ability.CON))
+        {
+            if(ranks > 0 && classSkill)
+            {
+                return ranks + 3 + ((pcConScoreSpinner.getValue()/2)-5);
+            }
+            else {
+                return ranks + ((pcConScoreSpinner.getValue()/2)-5);
+            }
+        }
+        else if(basedOn.equals(AbilityScores.Ability.INT))
+        {
+            if(ranks > 0 && classSkill)
+            {
+                return ranks + 3 + ((pcIntScoreSpinner.getValue()/2)-5);
+            }
+            else {
+                return ranks + ((pcIntScoreSpinner.getValue()/2)-5);
+            }
+        }
+        else if(basedOn.equals(AbilityScores.Ability.WIS))
+        {
+            if(ranks > 0 && classSkill)
+            {
+                return ranks + 3 + ((pcWisScoreSpinner.getValue()/2)-5);
+            }
+            else {
+                return ranks + ((pcWisScoreSpinner.getValue()/2)-5);
+            }
+        }
+        else
+        {
+            if(ranks > 0 && classSkill)
+            {
+                return ranks + 3 + ((pcChaScoreSpinner.getValue()/2)-5);
+            }
+            else {
+                return ranks + ((pcChaScoreSpinner.getValue()/2)-5);
+            }
+        }
     }
 
     /**
@@ -534,5 +780,50 @@ public class CharacterEditWindowController
         pcCurrentHPSpinner.increment(difference);
 
         System.out.println(event.getEventType());
+    }
+
+    /**
+     * Class: SkillDisplay
+     * This sub-class is meant to handle interactions from the hard-coded display to the
+     * dynamically generated Skills list.  As the objects in question do not have a permanent name that is
+     * reference-able outside of the specific instance that they are created, this object is necessary for outside reference
+     */
+    private class SkillDisplay
+    {
+        // The references to the display methods, which hopefully stay up to date
+        private Label modDisplay;
+        private Spinner<Integer> ranks;
+        private CheckBox classSkill;
+
+        /**
+         * Constructor:
+         * This method will create the SkillDisplay object using the required Label that displays
+         * the total, the spinner for the ranks, and the checkbox for class skill status.
+         * @param modDisplay - The label that displays the total mod of the skill
+         * @param ranks - The spinner that contains the number of ranks that a particular skill has
+         * @param classSkill - The checkbox that determines whether or not a skill is a class skill
+         */
+        public SkillDisplay(Label modDisplay, Spinner<Integer> ranks, CheckBox classSkill)
+        {
+            this.classSkill = classSkill;
+            this.modDisplay = modDisplay;
+            this.ranks = ranks;
+        }
+
+        /**
+         * Method: updateDisplay(int)
+         * This method updates the modDisplay label using the information available.
+         * It was built for use with the ability score spinner updates.
+         * @param scoreMod - The modifier for the associated skill.
+         */
+        public void updateDisplay(int scoreMod)
+        {
+            if(ranks.getValue() > 0 && classSkill.isSelected())
+            {
+                modDisplay.setText("" + (ranks.getValue() + 3 + scoreMod));
+            } else {
+                modDisplay.setText("" + (ranks.getValue() + scoreMod));
+            }
+        }
     }
 }
