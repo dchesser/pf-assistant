@@ -5,7 +5,9 @@ import java.util.HashMap;
 import argo.jdom.JsonObjectNodeBuilder;
 import network.cardboard.crystallogic.AbilityScores.Ability;
 
+import static argo.jdom.JsonNodeBuilders.aFalseBuilder;
 import static argo.jdom.JsonNodeBuilders.aStringBuilder;
+import static argo.jdom.JsonNodeBuilders.aTrueBuilder;
 import static argo.jdom.JsonNodeBuilders.anObjectBuilder;
 
 /**
@@ -211,7 +213,7 @@ public class PlayerSkill
 		JsonObjectNodeBuilder builder = anObjectBuilder();
 
 		builder.withField("name", aStringBuilder(skill.getName()))
-				.withField("classSkill", aStringBuilder(isClassSkill + ""))
+				.withField("classSkill", isClassSkill ? aTrueBuilder(): aFalseBuilder())
 				.withField("ranks", aStringBuilder(ranks + ""));
 
 		return builder;

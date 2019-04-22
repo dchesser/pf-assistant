@@ -40,177 +40,177 @@ public class SkillTest {
 			"\"skills\": [" +
 				"{" +
 					"\"name\": \"Linguistics\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"3\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Stealth\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Disable Device\"," +
-					"\"classSkill\": \"true\"," +
+					"\"classSkill\": true," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Knowledge Local\"," +
-					"\"classSkill\": \"true\"," +
+					"\"classSkill\": true," +
 					"\"ranks\": \"1\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Use Magic Device\"," +
-					"\"classSkill\": \"true\"," +
+					"\"classSkill\": true," +
 					"\"ranks\": \"3\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Knowledge Engineering\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Handle Animal\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Knowledge Planes\"," +
-					"\"classSkill\": \"true\"," +
+					"\"classSkill\": true," +
 					"\"ranks\": \"10\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Sense Motive\"," +
-					"\"classSkill\": \"true\"," +
+					"\"classSkill\": true," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Perception\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Survival\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Profession\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"7\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Heal\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Escape Artist\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Spellcraft\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Diplomacy\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Climb\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Knowledge Arcana\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Appraise\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Disguise\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Knowledge Dungeoneering\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Craft\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Knowledge Geography\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Fly\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Intimidate\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Knowledge Nobility\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Perform\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Knowledge Nature\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Swim\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Knowledge Religion\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Ride\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Acrobatics\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Bluff\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Knowledge History\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}," +
 				"{" +
 					"\"name\": \"Sleight Of Hand\"," +
-					"\"classSkill\": \"false\"," +
+					"\"classSkill\": false," +
 					"\"ranks\": \"0\"" +
 				"}" +
 			"]," +

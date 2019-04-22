@@ -448,44 +448,16 @@ public class CharacterEditWindowController
                             skill.getKey().basedOnAbility()
                     )
             );
-            /*
-            if(classSkillCB.isSelected())
-            {
-                if(oldValue == 0 && newValue > 0)
-                {
-                    totalMod.setText("" + (Integer.parseInt(totalMod.getText()) + 3 + newValue));
-                }
-                else if(newValue == 0 && oldValue > 0)
-                {
-                    totalMod.setText("" + (Integer.parseInt(totalMod.getText()) - 3 - oldValue));
-                }
-                else
-                {
-                    totalMod.setText("" + (Integer.parseInt(totalMod.getText()) + (newValue - oldValue)));
-                }
-            }
-            else {
-                totalMod.setText("" + (Integer.parseInt(totalMod.getText()) + (newValue - oldValue)));
-            }
-            */
         }));
 
         classSkillCB.setOnAction(event ->
         {
-            totalMod.setText("" + getTotalMod(ranks.getValue(), classSkillCB.isSelected(), skill.getKey().basedOnAbility()));
-            /*
-            if(ranks.getValue() > 0) // Class bonus only applies if you have at least one rank
-            {
-                if(classSkillCB.isSelected())
-                {
-                    totalMod.setText("" + (Integer.parseInt(totalMod.getText()) + 3));
-                }
-                else {
-                    totalMod.setText("" + (Integer.parseInt(totalMod.getText()) - 3));
-                }
-            }
-            */
-
+            totalMod.setText("" +
+                    getTotalMod(ranks.getValue(),
+                            classSkillCB.isSelected(),
+                            skill.getKey().basedOnAbility()
+                    )
+            );
         });
 
         saveSkillDisplay(
