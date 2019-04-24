@@ -6,7 +6,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import network.cardboard.crystallogic.AbilityScores;
@@ -80,11 +79,6 @@ public class CharacterDiceCreationWindowController {
         sbMenuBar.setUseSystemMenuBar(true);
     }
 
-    public void setSaveLocation(File saveLocation)
-    {
-        this.saveLocation = saveLocation;
-    }
-
     /**
      * @TODO Expand this file as we add more things to the PlayerCharacter class!  It is very short on data right now!
      * The purpose of this method is to take the contents of the window and prepare them into a PlayerCharacter object
@@ -102,23 +96,6 @@ public class CharacterDiceCreationWindowController {
                 scoreRolls.get(pcChaScoreSpinner.getValue())
         );
 
-        // Setup the new SkillSet
-        HashMap<PlayerSkill.GameSkill, PlayerSkill> newSkillSet = new HashMap<>();
-
-        // Read through all of the GridPane's children and figure out wtf is going on
-        for(int i = 5; i < skillGridPane.getChildren().size(); i+=4)
-        {
-
-            String skillName = ((Button)skillGridPane.getChildren().get(i)).getText();
-            boolean isClassSkill = ((CheckBox)skillGridPane.getChildren().get(i+1)).isSelected();
-            // totalMod is unnecessary ((Label)skillGridPane.getChildren().get(i+2)).getText();
-            int ranks = ((Spinner<Integer>)skillGridPane.getChildren().get(i+3)).getValue();
-
-            if(PlayerSkill.getGameSkill(skillName) != null) {
-                PlayerSkill skill = new PlayerSkill(PlayerSkill.getGameSkill(skillName), ranks, isClassSkill);
-                newSkillSet.put(PlayerSkill.getGameSkill(skillName), skill);
-            }
-        }
 
         playerCharacter = new PlayerCharacter(pcNameField.getText(),
                 newAbilities,
@@ -140,7 +117,7 @@ public class CharacterDiceCreationWindowController {
                 OtherMoneyField.getText(),
                 pcCurrentHPSpinner.getValue(),
                 pcMaxHPSpinner.getValue(),
-                newSkillSet
+                PlayerSkill.skillList()
         );
 
         sbMenuBar.setUseSystemMenuBar(true);
@@ -291,12 +268,11 @@ public class CharacterDiceCreationWindowController {
     }
 
     private void updateError() {
-        if (errorMessage.getText().isEmpty())
-            errorMessage.setText("Make sure your abilities all have unique score options");
+        errorMessage.setText("Make sure your abilities all have unique score options");
     }
 
     private PlayerCharacter playerCharacter = new PlayerCharacter("Default Character");
-    private File saveLocation = new File("saves");
+    private File saveLocation;
     private ObservableList<String> scoreOptions = FXCollections.observableArrayList("A", "B", "C", "D", "E", "F");
 
     @FXML

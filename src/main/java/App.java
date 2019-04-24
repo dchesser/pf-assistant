@@ -36,34 +36,36 @@ public class App extends Application {
         MenuItem dieRollHeroic = new MenuItem("Dice Roll - Heroic");
         dieRollHeroic.setOnAction(event -> {
             System.out.println("Create Heroic Method button pressed");
-            new CharacterCreateWindow(CharacterCreateWindow.Method.HEROIC);
-//            CharacterCreationSB creationSB = new CharacterCreationSB(CharacterCreationSB.CreationMethod.HEROIC);
+//            new CharacterCreateWindow(CharacterCreateWindow.Method.HEROIC);
+            CharacterCreationSB creationSB = new CharacterCreationSB(CharacterCreationSB.CreationMethod.HEROIC);
         });
 
         MenuItem dieRollModern = new MenuItem("Dice Roll - Modern");
         dieRollModern.setOnAction(event -> {
             System.out.println("Create Modern Method button pressed");
-            new CharacterCreateWindow(CharacterCreateWindow.Method.MODERN);
-//            CharacterCreationSB creationSB = new CharacterCreationSB(CharacterCreationSB.CreationMethod.MODERN);
+//            new CharacterCreateWindow(CharacterCreateWindow.Method.MODERN);
+            CharacterCreationSB creationSB = new CharacterCreationSB(CharacterCreationSB.CreationMethod.MODERN);
         });
 
         MenuItem dieRollClassic = new MenuItem("Dice Roll - Classic");
         dieRollClassic.setOnAction(event -> {
             System.out.println("Create Classic Method button pressed");
-            new CharacterCreateWindow(CharacterCreateWindow.Method.CLASSIC);
-//            CharacterCreationSB creationSB = new CharacterCreationSB(CharacterCreationSB.CreationMethod.CLASSIC);
+//            new CharacterCreateWindow(CharacterCreateWindow.Method.CLASSIC);
+            CharacterCreationSB creationSB = new CharacterCreationSB(CharacterCreationSB.CreationMethod.CLASSIC);
         });
 
         MenuItem pointBuy = new MenuItem("Point Buy");
         pointBuy.setOnAction(event -> {
             System.out.println("Point buy method used");
-            new CharacterCreateWindow(CharacterCreateWindow.Method.POINT_BUY);
+//            new CharacterCreateWindow(CharacterCreateWindow.Method.POINT_BUY);
+            CharacterCreationSB creationSB = new CharacterCreationSB(CharacterCreationSB.CreationMethod.POINT_BUY);
         });
 
         MenuItem customCreation = new MenuItem("Custom");
         customCreation.setOnAction(event -> {
             System.out.println("Custom method chosen");
-            new CharacterCreateWindow(CharacterCreateWindow.Method.CUSTOM);
+//            new CharacterCreateWindow(CharacterCreateWindow.Method.CUSTOM);
+            CharacterCreationSB creationSB = new CharacterCreationSB(CharacterCreationSB.CreationMethod.CUSTOM);
         });
 
         MenuItem loadCharacter = new MenuItem("Load Character File");
