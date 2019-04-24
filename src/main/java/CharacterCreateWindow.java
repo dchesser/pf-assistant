@@ -14,9 +14,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import network.cardboard.crystallogic.AbilityScores;
-import network.cardboard.crystallogic.Die;
-import network.cardboard.crystallogic.PlayerCharacter;
+import network.cardboard.crystallogic.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +31,9 @@ public class CharacterCreateWindow {
     protected enum Method {
         HEROIC,
         MODERN,
-        CLASSIC
+        CLASSIC,
+        POINT_BUY,
+        CUSTOM
     }
 
     private PlayerCharacter playerCharacter;
@@ -43,36 +43,179 @@ public class CharacterCreateWindow {
     private HashMap<String, Integer> scoreRolls;
 
     private ObservableList<String> scoreOptions = FXCollections.observableArrayList("A", "B", "C", "D", "E", "F");
-    private HashMap<String, Spinner<String>> abilityScores = new HashMap<>();
+    private HashMap<String, Spinner<String>> abilityScoreRollSpinners = new HashMap<>();
+    private HashMap<String, Spinner<Integer>> abilityScoreBuySpinners = new HashMap<>();
 
     private HBox errorHBox;
     private Stage stage;
 
+    private Method creationMethod;
+
+    private PointBuyPool buyPool = new PointBuyPool();
+
     public CharacterCreateWindow(Method method) {
-        switch (method) {
+        creationMethod = method;
+        switch (creationMethod) {
             case HEROIC:
                 scoreRolls = rollHeroicAbilityScores();
+                createRollWindow();
                 break;
             case MODERN:
                 scoreRolls = rollModernAbilityScores();
+                createRollWindow();
                 break;
             case CLASSIC:
                 scoreRolls = rollClassicAbilityScores();
+                createRollWindow();
+                break;
+            case POINT_BUY:
+                scoreRolls = pointBuyScores();
+                createBuyWindow();
+                break;
+            case CUSTOM:
+                scoreRolls = pointBuyScores();
+                createBuyWindow();
                 break;
         }
-        createWindow();
     }
 
-    private void createWindow() {
+    private void createBuyWindow() {
         StackPane layout = new StackPane();
         VBox container = new VBox();
 
         // Character name information
-        HBox nameBox = new HBox();
-        Label nameLabel = new Label("Name: ");
-        characterName = new TextField();
-        nameBox.getChildren().addAll(nameLabel, characterName);
-        nameBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+        HBox nameBox = nameHBox();
+
+        HBox pointsLeftBox = new HBox();
+        Text pointsLeftText = new Text("Points left: " + buyPool.getPointPool());
+        pointsLeftBox.getChildren().add(pointsLeftText);
+
+        Label strLabel = new Label("STR:");
+        Label dexLabel = new Label("DEX:");
+        Label conLabel = new Label("CON:");
+        Label intLabel = new Label("INT:");
+        Label wisLabel = new Label("WIS:");
+        Label chaLabel = new Label("CHA:");
+
+        abilityScoreBuySpinners.put("str", new Spinner<>());
+        abilityScoreBuySpinners.put("dex", new Spinner<>());
+        abilityScoreBuySpinners.put("con", new Spinner<>());
+        abilityScoreBuySpinners.put("int", new Spinner<>());
+        abilityScoreBuySpinners.put("wis", new Spinner<>());
+        abilityScoreBuySpinners.put("cha", new Spinner<>());
+
+        if (creationMethod == Method.POINT_BUY) {
+            int spinnerMinimum = 7;
+            int spinnerMaximum = 18;
+            int spinnerInitialValue = 10;
+
+            abilityScoreBuySpinners.get("str").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue, buyPool));
+            abilityScoreBuySpinners.get("con").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue, buyPool));
+            abilityScoreBuySpinners.get("dex").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue, buyPool));
+            abilityScoreBuySpinners.get("int").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue, buyPool));
+            abilityScoreBuySpinners.get("wis").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue, buyPool));
+            abilityScoreBuySpinners.get("cha").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue, buyPool));
+        } else if (creationMethod == Method.CUSTOM) {
+            int spinnerMinimum = 0;
+            int spinnerMaximum = 20;
+            int spinnerInitialValue = 10;
+
+            abilityScoreBuySpinners.get("str").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue));
+            abilityScoreBuySpinners.get("con").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue));
+            abilityScoreBuySpinners.get("dex").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue));
+            abilityScoreBuySpinners.get("int").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue));
+            abilityScoreBuySpinners.get("wis").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue));
+            abilityScoreBuySpinners.get("cha").setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerInitialValue));
+        }
+
+        strLabel.setLabelFor(abilityScoreBuySpinners.get("str"));
+        dexLabel.setLabelFor(abilityScoreBuySpinners.get("dex"));
+        conLabel.setLabelFor(abilityScoreBuySpinners.get("con"));
+        intLabel.setLabelFor(abilityScoreBuySpinners.get("int"));
+        wisLabel.setLabelFor(abilityScoreBuySpinners.get("wis"));
+        chaLabel.setLabelFor(abilityScoreBuySpinners.get("cha"));
+
+        abilityScoreBuySpinners.get("str").setOnMouseClicked(event -> pointsLeftText.setText("Points left: " + buyPool.getPointPool()));
+        abilityScoreBuySpinners.get("dex").setOnMouseClicked(event -> pointsLeftText.setText("Points left: " + buyPool.getPointPool()));
+        abilityScoreBuySpinners.get("con").setOnMouseClicked(event -> pointsLeftText.setText("Points left: " + buyPool.getPointPool()));
+        abilityScoreBuySpinners.get("int").setOnMouseClicked(event -> pointsLeftText.setText("Points left: " + buyPool.getPointPool()));
+        abilityScoreBuySpinners.get("wis").setOnMouseClicked(event -> pointsLeftText.setText("Points left: " + buyPool.getPointPool()));
+        abilityScoreBuySpinners.get("cha").setOnMouseClicked(event -> pointsLeftText.setText("Points left: " + buyPool.getPointPool()));
+
+        HBox strHBox = new HBox();
+        strHBox.getChildren().add(strLabel);
+        strHBox.getChildren().add(abilityScoreBuySpinners.get("str"));
+        //dex
+        HBox dexHBox = new HBox();
+        dexHBox.getChildren().add(dexLabel);
+        dexHBox.getChildren().add(abilityScoreBuySpinners.get("dex"));
+        //con
+        HBox conHBox = new HBox();
+        conHBox.getChildren().add(conLabel);
+        conHBox.getChildren().add(abilityScoreBuySpinners.get("con"));
+        //int
+        HBox intHBox = new HBox();
+        intHBox.getChildren().add(intLabel);
+        intHBox.getChildren().add(abilityScoreBuySpinners.get("int"));
+        //wis
+        HBox wisHBox = new HBox();
+        wisHBox.getChildren().add(wisLabel);
+        wisHBox.getChildren().add(abilityScoreBuySpinners.get("wis"));
+        //cha
+        HBox chaHBox = new HBox();
+        chaHBox.getChildren().add(chaLabel);
+        chaHBox.getChildren().add(abilityScoreBuySpinners.get("cha"));
+
+        //Combine everything
+        VBox strIntScoresVBox = new VBox();
+        VBox dexWisScoresVBox = new VBox();
+        VBox conChaScoresVBox = new VBox();
+        HBox abilityScoresHBox = new HBox();
+
+        strIntScoresVBox.getChildren().add(strHBox);
+        strIntScoresVBox.getChildren().add(intHBox);
+
+        dexWisScoresVBox.getChildren().add(dexHBox);
+        dexWisScoresVBox.getChildren().add(wisHBox);
+
+        conChaScoresVBox.getChildren().add(conHBox);
+        conChaScoresVBox.getChildren().add(chaHBox);
+
+        abilityScoresHBox.getChildren().add(strIntScoresVBox);
+        abilityScoresHBox.getChildren().add(dexWisScoresVBox);
+        abilityScoresHBox.getChildren().add(conChaScoresVBox);
+
+        // Spacing
+        strIntScoresVBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+        dexWisScoresVBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+        conChaScoresVBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+        abilityScoresHBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+
+
+        // Save Preparation and Combination
+        HBox saveHBox = saveHBox();
+
+        // Show the window
+        container.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+        container.setPadding(new Insets(ApplicationConfig.DEFAULT_PADDING));
+        container.setAlignment(Pos.TOP_LEFT);
+        if (creationMethod == Method.POINT_BUY) {
+            container.getChildren().add(pointsLeftBox);
+        }
+        container.getChildren().addAll(nameBox, abilityScoresHBox, saveHBox);
+        layout.getChildren().add(container);
+        stage = new Stage();
+        stage.setTitle("Create a character");
+        stage.setScene(new Scene(layout));
+        stage.show();
+    }
+
+    private void createRollWindow() {
+        StackPane layout = new StackPane();
+        VBox container = new VBox();
+
+        // Character name information
+        HBox nameBox = nameHBox();
 
         // Die rolls for scores
         HBox scores = new HBox();
@@ -83,12 +226,13 @@ public class CharacterCreateWindow {
         scores.getChildren().addAll(scoreLabel, scoreRollString);
 
         // Choose which roll goes to which ability
-        abilityScores.put("str", new Spinner<>(scoreOptions));
-        abilityScores.put("dex", new Spinner<>(scoreOptions));
-        abilityScores.put("con", new Spinner<>(scoreOptions));
-        abilityScores.put("int", new Spinner<>(scoreOptions));
-        abilityScores.put("wis", new Spinner<>(scoreOptions));
-        abilityScores.put("cha", new Spinner<>(scoreOptions));
+        abilityScoreRollSpinners.put("str", new Spinner<>(scoreOptions));
+        abilityScoreRollSpinners.put("dex", new Spinner<>(scoreOptions));
+        abilityScoreRollSpinners.put("con", new Spinner<>(scoreOptions));
+        abilityScoreRollSpinners.put("int", new Spinner<>(scoreOptions));
+        abilityScoreRollSpinners.put("wis", new Spinner<>(scoreOptions));
+        abilityScoreRollSpinners.put("cha", new Spinner<>(scoreOptions));
+
 
         Label strLabel = new Label("STR:");
         Label dexLabel = new Label("DEX:");
@@ -97,38 +241,38 @@ public class CharacterCreateWindow {
         Label wisLabel = new Label("WIS:");
         Label chaLabel = new Label("CHA:");
 
-        strLabel.setLabelFor(abilityScores.get("str"));
-        dexLabel.setLabelFor(abilityScores.get("dex"));
-        conLabel.setLabelFor(abilityScores.get("con"));
-        intLabel.setLabelFor(abilityScores.get("int"));
-        wisLabel.setLabelFor(abilityScores.get("wis"));
-        chaLabel.setLabelFor(abilityScores.get("cha"));
+        strLabel.setLabelFor(abilityScoreRollSpinners.get("str"));
+        dexLabel.setLabelFor(abilityScoreRollSpinners.get("dex"));
+        conLabel.setLabelFor(abilityScoreRollSpinners.get("con"));
+        intLabel.setLabelFor(abilityScoreRollSpinners.get("int"));
+        wisLabel.setLabelFor(abilityScoreRollSpinners.get("wis"));
+        chaLabel.setLabelFor(abilityScoreRollSpinners.get("cha"));
 
         // create minor pairs for each ability score
         //str
         HBox strHBox = new HBox();
         strHBox.getChildren().add(strLabel);
-        strHBox.getChildren().add(abilityScores.get("str"));
+        strHBox.getChildren().add(abilityScoreRollSpinners.get("str"));
         //dex
         HBox dexHBox = new HBox();
         dexHBox.getChildren().add(dexLabel);
-        dexHBox.getChildren().add(abilityScores.get("dex"));
+        dexHBox.getChildren().add(abilityScoreRollSpinners.get("dex"));
         //con
         HBox conHBox = new HBox();
         conHBox.getChildren().add(conLabel);
-        conHBox.getChildren().add(abilityScores.get("con"));
+        conHBox.getChildren().add(abilityScoreRollSpinners.get("con"));
         //int
         HBox intHBox = new HBox();
         intHBox.getChildren().add(intLabel);
-        intHBox.getChildren().add(abilityScores.get("int"));
+        intHBox.getChildren().add(abilityScoreRollSpinners.get("int"));
         //wis
         HBox wisHBox = new HBox();
         wisHBox.getChildren().add(wisLabel);
-        wisHBox.getChildren().add(abilityScores.get("wis"));
+        wisHBox.getChildren().add(abilityScoreRollSpinners.get("wis"));
         //cha
         HBox chaHBox = new HBox();
         chaHBox.getChildren().add(chaLabel);
-        chaHBox.getChildren().add(abilityScores.get("cha"));
+        chaHBox.getChildren().add(abilityScoreRollSpinners.get("cha"));
 
         //Combine everything
         VBox strIntScoresVBox = new VBox();
@@ -160,35 +304,7 @@ public class CharacterCreateWindow {
         errorHBox.setPadding(new Insets(ApplicationConfig.DEFAULT_PADDING));
 
         // Save Preparation and Combination
-        HBox saveHBox = new HBox();
-
-        // Button Creation
-        Button saveCharacterButton = new Button();
-        saveCharacterButton.setText("Save Character");
-        saveCharacterButton.setOnAction(event -> {
-            if (validAbilityScores()) {
-                saveCharacter();
-            } else {
-                displayValidationError();
-            }
-        });
-
-        Button saveCharacterAsButton = new Button();
-        saveCharacterAsButton.setText("Save As");
-        saveCharacterAsButton.setOnAction(event -> {
-            if (validAbilityScores()) {
-                saveCharacterAs();
-            } else {
-                displayValidationError();
-            }
-        });
-
-        // Combination
-        saveHBox.getChildren().add(saveCharacterButton);
-        saveHBox.getChildren().add(saveCharacterAsButton);
-
-        // Spacing
-        saveHBox.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+        HBox saveHBox = saveHBox();
 
         // Show the window
         container.setSpacing(ApplicationConfig.DEFAULT_SPACING);
@@ -232,6 +348,17 @@ public class CharacterCreateWindow {
         result.put("D", rollHeroic());
         result.put("E", rollHeroic());
         result.put("F", rollHeroic());
+        return result;
+    }
+
+    private HashMap<String, Integer> pointBuyScores() {
+        HashMap<String, Integer> result = new HashMap<>();
+        result.put("A", 10);
+        result.put("B", 10);
+        result.put("C", 10);
+        result.put("D", 10);
+        result.put("E", 10);
+        result.put("F", 10);
         return result;
     }
 
@@ -359,6 +486,7 @@ public class CharacterCreateWindow {
      * This method will save the character to the save location
      *
      * @TODO Probably need better naming for methods
+     * @TODO Refactor saving functionality into an interface the PlayerCharacter class implements
      */
     private void saveFile() {
         try {
@@ -383,25 +511,36 @@ public class CharacterCreateWindow {
      * It returns the new PlayerCharacter object that has been prepared for saving
      */
     private void updateCharacterForSave() {
-        AbilityScores newAbilities = new AbilityScores(
-            scoreRolls.get(abilityScores.get("str").getValue()),
-            scoreRolls.get(abilityScores.get("dex").getValue()),
-            scoreRolls.get(abilityScores.get("con").getValue()),
-            scoreRolls.get(abilityScores.get("int").getValue()),
-            scoreRolls.get(abilityScores.get("wis").getValue()),
-            scoreRolls.get(abilityScores.get("cha").getValue())
-        );
+        AbilityScores newAbilities;
+        if (!abilityScoreRollSpinners.isEmpty()) {
+            newAbilities = new AbilityScores(
+                scoreRolls.get(abilityScoreRollSpinners.get("str").getValue()),
+                scoreRolls.get(abilityScoreRollSpinners.get("dex").getValue()),
+                scoreRolls.get(abilityScoreRollSpinners.get("con").getValue()),
+                scoreRolls.get(abilityScoreRollSpinners.get("int").getValue()),
+                scoreRolls.get(abilityScoreRollSpinners.get("wis").getValue()),
+                scoreRolls.get(abilityScoreRollSpinners.get("cha").getValue())
+            );
+        } else {
+            newAbilities = new AbilityScores(
+                abilityScoreBuySpinners.get("str").getValue(),
+                abilityScoreBuySpinners.get("dex").getValue(),
+                abilityScoreBuySpinners.get("con").getValue(),
+                abilityScoreBuySpinners.get("int").getValue(),
+                abilityScoreBuySpinners.get("wis").getValue(),
+                abilityScoreBuySpinners.get("cha").getValue()
+            );
+        }
         playerCharacter = new PlayerCharacter(characterName.getText(), newAbilities);
     }
 
-    // @TODO Clean up the logic in this method
     private boolean validAbilityScores() {
-        String strength = abilityScores.get("str").getValue();
-        String dexterity = abilityScores.get("dex").getValue();
-        String intelligence = abilityScores.get("int").getValue();
-        String constitution = abilityScores.get("con").getValue();
-        String wisdom = abilityScores.get("wis").getValue();
-        String charisma = abilityScores.get("cha").getValue();
+        String strength = abilityScoreRollSpinners.get("str").getValue();
+        String dexterity = abilityScoreRollSpinners.get("dex").getValue();
+        String intelligence = abilityScoreRollSpinners.get("int").getValue();
+        String constitution = abilityScoreRollSpinners.get("con").getValue();
+        String wisdom = abilityScoreRollSpinners.get("wis").getValue();
+        String charisma = abilityScoreRollSpinners.get("cha").getValue();
 
         boolean sameAsStr = strength.equalsIgnoreCase(dexterity) && strength.equalsIgnoreCase(constitution) && strength.equalsIgnoreCase(intelligence) && strength.equalsIgnoreCase(wisdom) && strength.equalsIgnoreCase(charisma);
         boolean sameAsDex = dexterity.equalsIgnoreCase(constitution) && dexterity.equalsIgnoreCase(intelligence) && dexterity.equalsIgnoreCase(wisdom) && dexterity.equalsIgnoreCase(charisma);
@@ -417,5 +556,47 @@ public class CharacterCreateWindow {
         error.setText("Make sure your abilities all have unique scores");
         error.setFill(Color.RED);
         errorHBox.getChildren().add(error);
+    }
+
+    private HBox nameHBox() {
+        HBox output = new HBox();
+        Label nameLabel = new Label("Name: ");
+        characterName = new TextField();
+        output.getChildren().addAll(nameLabel, characterName);
+        output.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+        return output;
+    }
+
+    private HBox saveHBox() {
+        HBox output = new HBox();
+
+        // Button Creation
+        Button saveCharacterButton = new Button();
+        saveCharacterButton.setText("Save Character");
+        saveCharacterButton.setOnAction(event -> {
+            if (creationMethod == Method.POINT_BUY || creationMethod == Method.CUSTOM || validAbilityScores()) {
+                saveCharacter();
+            } else {
+                displayValidationError();
+            }
+        });
+
+        Button saveCharacterAsButton = new Button();
+        saveCharacterAsButton.setText("Save As");
+        saveCharacterAsButton.setOnAction(event -> {
+            if (creationMethod == Method.POINT_BUY || creationMethod == Method.CUSTOM || validAbilityScores()) {
+                saveCharacterAs();
+            } else {
+                displayValidationError();
+            }
+        });
+
+        // Combination
+        output.getChildren().add(saveCharacterButton);
+        output.getChildren().add(saveCharacterAsButton);
+
+        // Spacing
+        output.setSpacing(ApplicationConfig.DEFAULT_SPACING);
+        return output;
     }
 }

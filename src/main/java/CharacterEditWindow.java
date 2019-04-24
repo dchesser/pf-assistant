@@ -22,6 +22,9 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
 
+import argo.jdom.JdomParser;
+import argo.jdom.JsonNode;
+import argo.saj.InvalidSyntaxException;
 
 /**
  * This class is used for displaying the window that is used to edit characters.
@@ -51,7 +54,7 @@ public class CharacterEditWindow {
      */
     public CharacterEditWindow()
     {
-        playerCharacter = new PlayerCharacter("New Character", false);
+        playerCharacter = new PlayerCharacter("New Character");
 
         createWindow(); // This goes at the end, as it requires playerCharacter to have a name
     }
@@ -219,6 +222,7 @@ public class CharacterEditWindow {
     }
 
     /**
+     * @Deprecated
      * This method is used to save the currently open character.
      * It will, by default, remember where you last saved, or loaded from,
      * and save to that location.
@@ -245,6 +249,7 @@ public class CharacterEditWindow {
     }
 
     /**
+     * @Deprecated
      * This method is used to save the currently open character under a name that you specify.
      */
     private void saveCharacterAs() {
@@ -266,6 +271,7 @@ public class CharacterEditWindow {
     }
 
     /**
+     * @Deprecated
      * This method is used to update the saveLocation for use in SaveAs as well as first time Saves
      */
     private void updateSaveLocation() {
@@ -288,8 +294,10 @@ public class CharacterEditWindow {
     }
 
     /**
+     * @Deprecated
      * This method will save the character to the save location
      * @TODO Probably need better naming for methods
+     * @TODO Refactor saving functionality into an interface the PlayerCharacter class implements
      */
     private void saveFile() {
         try{
@@ -327,6 +335,7 @@ public class CharacterEditWindow {
     }
 
     /**
+     * @Deprecated
      * This is only to be called if you are loading a character from saveLocation
      * @return the character that was saved in saveLocation (null for errored)
      */
@@ -344,12 +353,15 @@ public class CharacterEditWindow {
             }
 
             // The PlayerCharacter class will return a new instance of itself after parsing the JSON file
-            playerCharacter = new PlayerCharacter(contents, true);
+	        JsonNode data = new JdomParser().parse(contents);
+            playerCharacter = new PlayerCharacter(data);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException i) {
             i.printStackTrace();
+        } catch (InvalidSyntaxException ise) {
+            ise.printStackTrace();
         }
     }
 }

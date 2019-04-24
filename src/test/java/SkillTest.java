@@ -3,45 +3,40 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import argo.jdom.JdomParser;
 import argo.jdom.JsonNode;
-import static argo.format.JsonNumberUtils.asInteger;
+import network.cardboard.crystallogic.AbilityScores.Ability;
 import network.cardboard.crystallogic.PlayerCharacter;
-import network.cardboard.crystallogic.AbilityScores;
+import network.cardboard.crystallogic.PlayerSkill;
+import network.cardboard.crystallogic.PlayerSkill.GameSkill;
 
-public class CharacterJSONTest {
-    /**
-     * Brother Crunk was my half-orc monk for D&D 5e.
-     * Despite the game aiming for a typical Asian monastery,
-     * I went for the traditional European monastery approach.
-     * We'll be using his statistics as a base as we
-     * convert him over to Pathfinder.
-     */
+public class SkillTest {
+    private static JdomParser parser = new JdomParser();
 	private static String brotherCrunk ="{ " +
-			"\"name\": \"Brother Crunk\"," +
-			"\"abilityScores\": {" +
-				"\"STR\":  16," +
-				"\"DEX\":  16," +
-				"\"CON\":  13," +
-				"\"INT\":  12," +
-				"\"WIS\":  15," +
-				"\"CHA\":  10 }," +
-			"\"alignment\":  \"NE\"," +
-			"\"race\": \"Half-Orc\"," +
-			"\"deity\": \"unknown\"," +
-			"\"height\": \"tall?\"," +
-			"\"weight\": \"Bulky and Stronk\"," +
-			"\"homeland\": \"Orcland\"," +
-			"\"hairColor\": \"Dark Brown?\"," +
-			"\"eyeColor\": \"Dark Brown\"," +
-			"\"gender\": \"M\"," +
-			"\"age\": \"25\"," +
-			"\"size\": \"M\"," +
-			"\"platinumCoins\": 100," +
-			"\"goldCoins\": 200," +
-			"\"silverCoins\": 3," +
-			"\"copperCoins\": 0," +
-			"\"otherValuables\": \"Religious Symbol\"," +
-			"\"currentHealth\": 256," +
-			"\"maxHealth\": 512," +
+				"\"name\": \"Brother Crunk\"," +
+				"\"abilityScores\": {" +
+					"\"STR\":  16," +
+					"\"DEX\":  16," +
+					"\"CON\":  13," +
+					"\"INT\":  12," +
+					"\"WIS\":  15," +
+					"\"CHA\":  10 }," +
+				"\"alignment\":  \"NE\"," +
+				"\"race\": \"Half-Orc\"," +
+				"\"deity\": \"unknown\"," +
+				"\"height\": \"tall?\"," +
+				"\"weight\": \"Bulky and Stronk\"," +
+				"\"homeland\": \"Orcland\"," +
+				"\"hairColor\": \"Dark Brown?\"," +
+				"\"eyeColor\": \"Dark Brown\"," +
+				"\"gender\": \"M\"," +
+				"\"age\": \"25\"," +
+				"\"size\": \"M\"," +
+				"\"platinumCoins\": 100," +
+				"\"goldCoins\": 200," +
+				"\"silverCoins\": 3," +
+				"\"copperCoins\": 0," +
+				"\"otherValuables\": \"Religious Symbol\"," +
+				"\"currentHealth\": 256," +
+				"\"maxHealth\": 512," +
 			"\"skills\": [" +
 				"{" +
 					"\"name\": \"Linguistics\"," +
@@ -221,31 +216,20 @@ public class CharacterJSONTest {
 			"]," +
 			"}";
 
-    private static final JdomParser PARSER = new JdomParser();
-
     @Test
-    public void readPlayerCharacter()
+    public void testSkills()
     {
 	try {
-	    JsonNode result = PARSER.parse(brotherCrunk);
+	    JsonNode result = parser.parse(brotherCrunk);
 	    PlayerCharacter crunk = new PlayerCharacter(result);
-	    JsonNode abilities = result.getNode("abilityScores");
-	    int st = asInteger(abilities.getNumberValue("STR"));
-	    int dx = asInteger(abilities.getNumberValue("DEX"));
-	    int cn = asInteger(abilities.getNumberValue("CON"));
-	    int in = asInteger(abilities.getNumberValue("INT"));
-	    int ws = asInteger(abilities.getNumberValue("WIS"));
-	    int ch = asInteger(abilities.getNumberValue("CHA"));
 
-	    crunk.abilityScores = new AbilityScores(st, dx, cn, in, ws, ch);
+	    crunk.getSkill(GameSkill.Diplomacy).addRanks(2);
+	    crunk.getSkill(GameSkill.Climb).addRanks(3);
 
-	    assertEquals(crunk.abilityScores.strength.getValue(), 16);
-	    assertEquals(crunk.abilityScores.dexterity.getValue(), 16);
-	    assertEquals(crunk.abilityScores.constitution.getValue(), 13);
-	    assertEquals(crunk.abilityScores.intelligence.getValue(), 12);
-	    assertEquals(crunk.abilityScores.wisdom.getValue(), 15);
-	    assertEquals(crunk.abilityScores.charisma.getValue(), 10);
-	    assertTrue("Brother Crunk".equals(crunk.getName()));
+	    System.out.printf("Sample roll for climb: %d\n",
+			      crunk.rollForSkill(GameSkill.Climb));
+
+	    assertEquals(2, crunk.getSkill(GameSkill.Diplomacy).getRanks());
 	} catch (argo.saj.InvalidSyntaxException ex) {
 	    Assert.fail("Test JSON was not proper.");
 	}

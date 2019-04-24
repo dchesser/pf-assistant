@@ -1,9 +1,16 @@
+import FXMLControllers.CharacterCreationSB;
+import FXMLControllers.CharacterEditWindowSB;
+import NonFXMLWindows.DieRollWindow;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -23,37 +30,46 @@ public class App extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("PathFinder Assistant");
 
-        // Create character button
-        Button createClassicCharacterButton = new Button();
-        createClassicCharacterButton.setText("Create Character - Classic Method");
-        /* Open new window for editing a character */
-        createClassicCharacterButton.setOnAction(event -> {
-            System.out.println("Create Classic Method button pressed");
-            new CharacterCreateWindow(CharacterCreateWindow.Method.CLASSIC);
-        });
+        MenuBar menuBar = new MenuBar();
+        menuBar.setUseSystemMenuBar(true);
 
-        Button createModernCharacterButton = new Button();
-        createModernCharacterButton.setText("Create Character - Modern Method");
-        createModernCharacterButton.setOnAction(event -> {
-            System.out.println("Create Modern Method button pressed");
-            new CharacterCreateWindow(CharacterCreateWindow.Method.MODERN);
-        });
-
-        Button createHeroicCharacterButton = new Button();
-        createHeroicCharacterButton.setText("Create Character - Heroic Method");
-        createHeroicCharacterButton.setOnAction(event -> {
+        MenuItem dieRollHeroic = new MenuItem("Dice Roll - Heroic");
+        dieRollHeroic.setOnAction(event -> {
             System.out.println("Create Heroic Method button pressed");
-            new CharacterCreateWindow(CharacterCreateWindow.Method.HEROIC);
+//            new CharacterCreateWindow(CharacterCreateWindow.Method.HEROIC);
+            CharacterCreationSB creationSB = new CharacterCreationSB(CharacterCreationSB.CreationMethod.HEROIC);
         });
 
-        // Load character button
-        Button loadCharacterButton = new Button();
-        loadCharacterButton.setText("Load Character");
+        MenuItem dieRollModern = new MenuItem("Dice Roll - Modern");
+        dieRollModern.setOnAction(event -> {
+            System.out.println("Create Modern Method button pressed");
+//            new CharacterCreateWindow(CharacterCreateWindow.Method.MODERN);
+            CharacterCreationSB creationSB = new CharacterCreationSB(CharacterCreationSB.CreationMethod.MODERN);
+        });
 
-        /* Open new window for loading character */
-        loadCharacterButton.setOnAction(event -> {
-            System.out.println("Load Character Button Pressed");
+        MenuItem dieRollClassic = new MenuItem("Dice Roll - Classic");
+        dieRollClassic.setOnAction(event -> {
+            System.out.println("Create Classic Method button pressed");
+//            new CharacterCreateWindow(CharacterCreateWindow.Method.CLASSIC);
+            CharacterCreationSB creationSB = new CharacterCreationSB(CharacterCreationSB.CreationMethod.CLASSIC);
+        });
 
+        MenuItem pointBuy = new MenuItem("Point Buy");
+        pointBuy.setOnAction(event -> {
+            System.out.println("Point buy method used");
+//            new CharacterCreateWindow(CharacterCreateWindow.Method.POINT_BUY);
+            CharacterCreationSB creationSB = new CharacterCreationSB(CharacterCreationSB.CreationMethod.POINT_BUY);
+        });
+
+        MenuItem customCreation = new MenuItem("Custom");
+        customCreation.setOnAction(event -> {
+            System.out.println("Custom method chosen");
+//            new CharacterCreateWindow(CharacterCreateWindow.Method.CUSTOM);
+            CharacterCreationSB creationSB = new CharacterCreationSB(CharacterCreationSB.CreationMethod.CUSTOM);
+        });
+
+        MenuItem loadCharacter = new MenuItem("Load Character File");
+        loadCharacter.setOnAction(event -> {
             // if the default save directory doesn't exist, make it.
             File saveDirectory = new File("saves");
             if(!saveDirectory.exists()) {
@@ -71,27 +87,35 @@ public class App extends Application {
             File saveLocation = saveSelector.showOpenDialog(primaryStage);
 
             if (saveLocation != null) {
-                CharacterEditWindow existingCharacterEditWindow = new CharacterEditWindow(saveLocation);
+                CharacterEditWindowSB cewsb = new CharacterEditWindowSB(saveLocation);
             }
         });
 
-        // Quit button
-        Button quitButton = new Button();
-        quitButton.setText("Quit");
-        quitButton.setOnAction(event -> primaryStage.close());
+        MenuItem quit = new MenuItem("Quit");
+        quit.setOnAction(event -> primaryStage.close());
+
+        Menu fileMenu = new Menu("File");
+
+        Menu characterMenu = new Menu("Create Character");
+        characterMenu.getItems().addAll(dieRollHeroic, dieRollModern, dieRollClassic, pointBuy, customCreation);
+
+        fileMenu.getItems().addAll(characterMenu, loadCharacter, quit);
+        menuBar.getMenus().addAll(fileMenu);
+
+        Text applicationName = new Text();
+        applicationName.setText("PathFinder Assistant v" + ApplicationConfig.VERSION_STRING);
 
         VBox rootView = new VBox();
 
-        rootView.getChildren().add(createClassicCharacterButton);
-        rootView.getChildren().add(createModernCharacterButton);
-        rootView.getChildren().add(createHeroicCharacterButton);
-        rootView.getChildren().add(loadCharacterButton);
-	      rootView.getChildren().add(rollDieWindowButton());
-        rootView.getChildren().add(quitButton);
+        rootView.getChildren().add(applicationName);
+        rootView.getChildren().add(rollDieWindowButton());
+        rootView.getChildren().add(menuBar);
+
         rootView.setAlignment(Pos.CENTER);
         rootView.setSpacing(ApplicationConfig.DEFAULT_SPACING);
         rootView.setPadding(new Insets(ApplicationConfig.DEFAULT_PADDING));
-        primaryStage.setScene(new Scene(rootView));
+
+        primaryStage.setScene(new Scene(rootView, 640, 480));
 
         primaryStage.show();
     }
@@ -106,8 +130,8 @@ public class App extends Application {
     }
 
     private Button rollDieWindowButton() {
-	Button btn = new Button("Roll Dice");
-	btn.setOnAction(event -> new DieRollWindow());
-	return btn;
+        Button btn = new Button("Roll Dice");
+        btn.setOnAction(event -> new DieRollWindow());
+        return btn;
     }
 }
