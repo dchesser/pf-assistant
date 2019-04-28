@@ -2,7 +2,6 @@ package network.cardboard.crystallogic;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableIntegerValue;
 import javafx.beans.value.ObservableValue;
 
 public class MonetaryValue
@@ -64,44 +63,20 @@ public class MonetaryValue
     }
 
     public ObservableValue<Integer> getValue() {
-        return new ObservableIntegerValue() {
-            @Override
-            public int get() {
-                return toCopper();
-            }
+        return new ObservableValue<Integer>() {
 
             @Override
-            public int intValue() {
-                return toCopper();
-            }
-
-            @Override
-            public long longValue() {
-                return (long) toCopper();
-            }
-
-            @Override
-            public float floatValue() {
-                return (float) toCopper();
-            }
-
-            @Override
-            public double doubleValue() {
-                return (float) toCopper();
-            }
-
-            @Override
-            public void addListener(ChangeListener<? super Number> listener) {
+            public void addListener(ChangeListener<? super Integer> listener) {
 
             }
 
             @Override
-            public void removeListener(ChangeListener<? super Number> listener) {
+            public void removeListener(ChangeListener<? super Integer> listener) {
 
             }
 
             @Override
-            public Number getValue() {
+            public Integer getValue() {
                 return toCopper();
             }
 
