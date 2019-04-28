@@ -3,10 +3,12 @@ package FXMLControllers;
 import NonFXMLWindows.DieRollWindow;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.SubScene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import network.cardboard.crystallogic.AbilityScores;
 import network.cardboard.crystallogic.Die;
 import network.cardboard.crystallogic.PlayerCharacter;
@@ -106,6 +108,12 @@ public class CharacterEditWindowController
     @FXML
     private MenuBar sbMenuBar;
 
+    @FXML
+    private Window inventoryView;
+
+    @FXML
+    private InventoryController inventoryController;
+
     // General Methods
     public CharacterEditWindowController()
     {
@@ -117,6 +125,8 @@ public class CharacterEditWindowController
         playerCharacter = pc;
 
         sbMenuBar.setUseSystemMenuBar(true);
+
+        inventoryController = new InventoryController(playerCharacter.getInventory());
 
         // Lots and lots of null checks to see if I can even load the data (makes things more reverse compatible save-wise(
         if(pc.getName() != null) {

@@ -52,6 +52,8 @@ public class PlayerCharacter
     private Integer copperCoins;
     private String otherValuables;
 
+    private Inventory inventory;
+
     private Integer currHealth;
     private Integer maxHealth;
 
@@ -143,6 +145,7 @@ public class PlayerCharacter
         this.currHealth = 0;
         this.maxHealth = 0;
         this.skillSet = PlayerSkill.skillList();
+        this.inventory = new Inventory();
     }
 
     public PlayerCharacter(String name, AbilityScores abilityScores, String alignment, String race, String deity,
@@ -432,5 +435,9 @@ public class PlayerCharacter
 
     public Integer getMaxHealth() {
         return maxHealth;
+    }
+
+    public Inventory getInventory() {
+        return inventory;
     }
 }

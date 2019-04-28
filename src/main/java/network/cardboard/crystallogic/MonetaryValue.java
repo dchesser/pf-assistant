@@ -1,5 +1,10 @@
 package network.cardboard.crystallogic;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableIntegerValue;
+import javafx.beans.value.ObservableValue;
+
 public class MonetaryValue
 {
     private int value; 		// In Cuprous Pieces (cp), base unit.
@@ -56,6 +61,60 @@ public class MonetaryValue
     public float toPlatinum()
     {
 	return new Integer(this.value).floatValue() / 1000;
+    }
+
+    public ObservableValue<Integer> getValue() {
+        return new ObservableIntegerValue() {
+            @Override
+            public int get() {
+                return toCopper();
+            }
+
+            @Override
+            public int intValue() {
+                return toCopper();
+            }
+
+            @Override
+            public long longValue() {
+                return (long) toCopper();
+            }
+
+            @Override
+            public float floatValue() {
+                return (float) toCopper();
+            }
+
+            @Override
+            public double doubleValue() {
+                return (float) toCopper();
+            }
+
+            @Override
+            public void addListener(ChangeListener<? super Number> listener) {
+
+            }
+
+            @Override
+            public void removeListener(ChangeListener<? super Number> listener) {
+
+            }
+
+            @Override
+            public Number getValue() {
+                return toCopper();
+            }
+
+            @Override
+            public void addListener(InvalidationListener listener) {
+
+            }
+
+            @Override
+            public void removeListener(InvalidationListener listener) {
+
+            }
+        };
     }
 
     @Override
