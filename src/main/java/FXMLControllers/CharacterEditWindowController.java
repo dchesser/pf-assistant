@@ -5,6 +5,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.SubScene;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -122,7 +123,7 @@ public class CharacterEditWindowController
     private Window inventoryView;
 
     @FXML
-    private InventoryController inventoryController;
+    private AnchorPane inventoryAnchorPane;
 
     // General Methods
     public CharacterEditWindowController()
@@ -136,7 +137,8 @@ public class CharacterEditWindowController
 
         sbMenuBar.setUseSystemMenuBar(true);
 
-        inventoryController = new InventoryController(playerCharacter.getInventory());
+        
+//        inventoryController = new InventoryController(playerCharacter.getInventory());
         strengthSkills = new ArrayList<>();
         dexteritySkills = new ArrayList<>();
         constitutionSkills = new ArrayList<>();
@@ -435,7 +437,7 @@ public class CharacterEditWindowController
 
         // Add  the class skill checkbox
         CheckBox classSkillCB = new CheckBox();
-        classSkillCB.setSelected(skill.getValue().isClassSkill()); //@TODO Figure out wtf is going wrong with this line.
+        classSkillCB.setSelected(skill.getValue().isClassSkill());
 
 
         // Button for opening the roll window.
