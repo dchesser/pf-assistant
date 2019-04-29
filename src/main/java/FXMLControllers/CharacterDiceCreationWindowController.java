@@ -10,6 +10,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import network.cardboard.crystallogic.AbilityScores;
 import network.cardboard.crystallogic.Die;
+import network.cardboard.crystallogic.Inventory;
 import network.cardboard.crystallogic.PlayerCharacter;
 import network.cardboard.crystallogic.PlayerSkill;
 
@@ -117,7 +118,8 @@ public class CharacterDiceCreationWindowController {
                 OtherMoneyField.getText(),
                 pcCurrentHPSpinner.getValue(),
                 pcMaxHPSpinner.getValue(),
-                PlayerSkill.skillList()
+                PlayerSkill.skillList(),
+                new Inventory()
         );
 
         sbMenuBar.setUseSystemMenuBar(true);

@@ -3,6 +3,8 @@ package FXMLControllers;
 import NonFXMLWindows.DieRollWindow;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.SubScene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
@@ -12,6 +14,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import network.cardboard.crystallogic.AbilityScores;
 import network.cardboard.crystallogic.Die;
+import network.cardboard.crystallogic.Inventory;
 import network.cardboard.crystallogic.PlayerCharacter;
 import network.cardboard.crystallogic.PlayerSkill;
 
@@ -27,6 +30,8 @@ public class CharacterEditWindowController
     // General Variables
     private PlayerCharacter playerCharacter;
     private File saveLocation;
+
+    private InventoryController inventoryController;
 
     // Display Assisting variables
     private ArrayList<SkillDisplay> strengthSkills;
@@ -120,9 +125,6 @@ public class CharacterEditWindowController
     private MenuBar sbMenuBar;
 
     @FXML
-    private Window inventoryView;
-
-    @FXML
     private AnchorPane inventoryAnchorPane;
 
     // General Methods
@@ -137,8 +139,6 @@ public class CharacterEditWindowController
 
         sbMenuBar.setUseSystemMenuBar(true);
 
-        
-//        inventoryController = new InventoryController(playerCharacter.getInventory());
         strengthSkills = new ArrayList<>();
         dexteritySkills = new ArrayList<>();
         constitutionSkills = new ArrayList<>();
@@ -319,6 +319,38 @@ public class CharacterEditWindowController
             // add a skill rank display row for the given name and rank.
             addSkillDisplayRow(entry, currRowCount);
             currRowCount++;
+        }
+
+        // Setup the Inventory
+        if(pc.getInventory() != null) {
+            loadInventory(pc.getInventory());
+        }
+        else {
+            loadInventory(new Inventory());
+        }
+    }
+
+    /**
+     * Method: loadInventory(Inventory)
+     * This method loads the inventory onto the display
+     * @param inv
+     */
+    public void loadInventory(Inventory inv)
+    {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/Inventory.fxml"));
+            Parent root = loader.load();
+
+            inventoryController = loader.getController();
+
+            inventoryController.setInventory(inv);
+
+            inventoryAnchorPane.getChildren().add(root);
+        }
+        catch (IOException i)
+        {
+            i.printStackTrace();
         }
     }
 
@@ -652,7 +684,8 @@ public class CharacterEditWindowController
                 OtherMoneyField.getText(),
                 pcCurrentHPSpinner.getValue(),
                 pcMaxHPSpinner.getValue(),
-                newSkillSet
+                newSkillSet,
+                inventoryController.getInventory()
         );
     }
 

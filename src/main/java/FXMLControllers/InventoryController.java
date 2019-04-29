@@ -25,7 +25,9 @@ public class InventoryController {
 
     public InventoryController()
     {
-
+        // This runs automatically without any option to feed it objects.
+        // Therefore, please don't try to use it for setting up data that we don't have
+        // time to feed it.
     }
 
     public InventoryController(Inventory inventory)
@@ -147,5 +149,10 @@ public class InventoryController {
         inventoryTable.getColumns().addAll(nameColumn, weightColumn, valueColumn, descriptionColumn);
 
 
+    }
+
+    public Inventory getInventory()
+    {
+        return playerInventory;
     }
 }

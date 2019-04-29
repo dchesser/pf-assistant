@@ -12,15 +12,12 @@ public class Inventory
 {
     // Possibly aim to make private, expose only those methods that
     // are relevant to inventories.
-    public ArrayList<Item> contents;
+    public ArrayList<Item> contents = new ArrayList<>();
 
     /**
      * Empty Constructor for new inventories
      */
-    public Inventory()
-    {
-	this.contents = new ArrayList<Item>();
-    }
+    public Inventory(){}
 
     /**
      * Constructor based on a JSON node.
@@ -49,9 +46,9 @@ public class Inventory
      * Insert an Item into this inventory.
      * @return true if the Item was added to the Inventory.
      */
-    public boolean addItem(Item item)
+    public void addItem(Item item)
     {
-	return this.contents.add(item);
+        this.contents.add(item);
     }
 
     /**

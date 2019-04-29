@@ -25,8 +25,6 @@ public class CharacterEditWindowSB {
             fxmlLoader.setLocation(getClass().getResource("/CharacterEditWindowLayout.fxml"));
             Parent root = fxmlLoader.load();
 
-            // Attempt at re-use of the fxmlLoader
-
             CharacterEditWindowController controller = fxmlLoader.getController();
 
             controller.setCharacter(new PlayerCharacter("Default"));

@@ -82,6 +82,7 @@ public class PlayerCharacter
         this.otherValuables = "Nothing (default)";
         this.currHealth = 0;
         this.maxHealth = 0;
+        this.inventory = new Inventory();
     }
 
     public PlayerCharacter(JsonNode json)
@@ -118,6 +119,7 @@ public class PlayerCharacter
         this.currHealth = 0;
         this.maxHealth = 0;
         this.skillSet = PlayerSkill.skillList();
+        this.inventory = new Inventory();
     }
 
     public PlayerCharacter(String name, AbilityScores abilityScores)
@@ -152,7 +154,7 @@ public class PlayerCharacter
                            String height, String weight, String homeland, String hairColor, String eyeColor,
                            String gender, String age, String size, Integer platinumCoins, Integer goldCoins,
                            Integer silverCoins, Integer copperCoins, String otherValuables, Integer currHealth,
-                           Integer maxHealth, HashMap<PlayerSkill.GameSkill, PlayerSkill> skillSet)
+                           Integer maxHealth, HashMap<PlayerSkill.GameSkill, PlayerSkill> skillSet, Inventory inventory)
     {
         this.name = name;
         this.abilityScores = abilityScores;
@@ -175,6 +177,7 @@ public class PlayerCharacter
         this.currHealth = currHealth;
         this.maxHealth = maxHealth;
         this.skillSet = skillSet;
+        this.inventory = inventory;
     }
 
     public void parseJSON(JsonNode node) throws InvalidSyntaxException

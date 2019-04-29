@@ -115,7 +115,8 @@ public class CharacterPointBuyCreationController {
                 OtherMoneyField.getText(),
                 pcCurrentHPSpinner.getValue(),
                 pcMaxHPSpinner.getValue(),
-                PlayerSkill.skillList()
+                PlayerSkill.skillList(),
+                new Inventory()
         );
 
 
