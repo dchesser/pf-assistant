@@ -23,7 +23,27 @@ public class InventoryController {
 
     private Inventory playerInventory;
 
-    public InventoryController(Inventory inventory) {
+    public InventoryController()
+    {
+
+    }
+
+    public InventoryController(Inventory inventory)
+    {
+        // This runs automatically without any option to feed it objects.
+        // Therefore, please don't try to use it for setting up data that we don't have
+        // time to feed it.
+    }
+
+    /**
+     * Method: setInventory(Inventory)
+     * This method sets the display options and data contents of the inventory display.
+     * This method should be run if you want it to display any sorts of information,
+     * as the constructor is useless for those functions.
+     * @param inventory
+     */
+    public void setInventory(Inventory inventory)
+    {
         this.playerInventory = inventory;
         inventoryTable.setItems(FXCollections.observableArrayList(playerInventory.contents));
 

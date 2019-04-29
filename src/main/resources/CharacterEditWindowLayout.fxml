@@ -305,7 +305,6 @@
                                <TextField fx:id="OtherMoneyField" GridPane.columnIndex="9" />
                            </children>
                         </GridPane>
-                        <fx:include fx:id="inventoryView" source="Inventory.fxml"/>
                      </children>
                   </AnchorPane>
                </content>
