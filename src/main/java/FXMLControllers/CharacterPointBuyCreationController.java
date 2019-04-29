@@ -1,9 +1,11 @@
 package FXMLControllers;
 
+import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import network.cardboard.crystallogic.*;
@@ -31,14 +33,15 @@ public class CharacterPointBuyCreationController {
 
         switch (method) {
             case POINT_BUY:
-                scoreRolls = pointBuyScores();
                 spinnerMinimum = 7;
                 spinnerMaximum = 18;
+                pointsLeftText.setText(pointsLeftText.getText() + buyPool.getPointPool());
                 break;
             case CUSTOM:
-                scoreRolls = pointBuyScores();
                 spinnerMinimum = 0;
                 spinnerMaximum = 20;
+                buyPool = new PointBuyPool(Integer.MAX_VALUE); // unlimited points, effectively
+                pointsLeftText.setText("");
                 break;
         }
 
@@ -64,12 +67,14 @@ public class CharacterPointBuyCreationController {
         pcWisScoreSpinner.setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerStart, buyPool));
         pcChaScoreSpinner.setValueFactory(new PointBuySpinnerValueFactory(spinnerMinimum, spinnerMaximum, spinnerStart, buyPool));
 
-        sbMenuBar.setUseSystemMenuBar(true);
-    }
+        pcStrScoreSpinner.setOnMouseClicked(event -> pointsLeftText.setText("Points left: " + buyPool.getPointPool()));
+        pcDexScoreSpinner.setOnMouseClicked(event -> pointsLeftText.setText("Points left: " + buyPool.getPointPool()));
+        pcConScoreSpinner.setOnMouseClicked(event -> pointsLeftText.setText("Points left: " + buyPool.getPointPool()));
+        pcIntScoreSpinner.setOnMouseClicked(event -> pointsLeftText.setText("Points left: " + buyPool.getPointPool()));
+        pcWisScoreSpinner.setOnMouseClicked(event -> pointsLeftText.setText("Points left: " + buyPool.getPointPool()));
+        pcChaScoreSpinner.setOnMouseClicked(event -> pointsLeftText.setText("Points left: " + buyPool.getPointPool()));
 
-    public void setSaveLocation(File saveLocation)
-    {
-        this.saveLocation = saveLocation;
+        sbMenuBar.setUseSystemMenuBar(true);
     }
 
     /**
@@ -89,23 +94,6 @@ public class CharacterPointBuyCreationController {
                 pcChaScoreSpinner.getValue()
         );
 
-        // Setup the new SkillSet
-        HashMap<PlayerSkill.GameSkill, PlayerSkill> newSkillSet = new HashMap<>();
-
-        // Read through all of the GridPane's children and figure out wtf is going on
-        for(int i = 5; i < skillGridPane.getChildren().size(); i+=4)
-        {
-
-            String skillName = ((Button)skillGridPane.getChildren().get(i)).getText();
-            boolean isClassSkill = ((CheckBox)skillGridPane.getChildren().get(i+1)).isSelected();
-            // totalMod is unnecessary ((Label)skillGridPane.getChildren().get(i+2)).getText();
-            int ranks = ((Spinner<Integer>)skillGridPane.getChildren().get(i+3)).getValue();
-
-            if(PlayerSkill.getGameSkill(skillName) != null) {
-                PlayerSkill skill = new PlayerSkill(PlayerSkill.getGameSkill(skillName), ranks, isClassSkill);
-                newSkillSet.put(PlayerSkill.getGameSkill(skillName), skill);
-            }
-        }
 
         playerCharacter = new PlayerCharacter(pcNameField.getText(),
                 newAbilities,
@@ -127,7 +115,7 @@ public class CharacterPointBuyCreationController {
                 OtherMoneyField.getText(),
                 pcCurrentHPSpinner.getValue(),
                 pcMaxHPSpinner.getValue(),
-                newSkillSet
+                PlayerSkill.skillList()
         );
 
 
@@ -176,21 +164,10 @@ public class CharacterPointBuyCreationController {
         }
     }
 
-    private HashMap<String, Integer> pointBuyScores() {
-        HashMap<String, Integer> result = new HashMap<>();
-        result.put("A", 10);
-        result.put("B", 10);
-        result.put("C", 10);
-        result.put("D", 10);
-        result.put("E", 10);
-        result.put("F", 10);
-        return result;
-    }
 
     private PlayerCharacter playerCharacter = new PlayerCharacter("Default Character");
-    private File saveLocation = new File("saves");
+    private File saveLocation;
     private PointBuyPool buyPool = new PointBuyPool();
-    private HashMap<String, Integer> scoreRolls;
 
     // FXML Field Variables
     @FXML
@@ -270,6 +247,9 @@ public class CharacterPointBuyCreationController {
 
     @FXML
     private GridPane skillGridPane;
+
+    @FXML
+    private Label pointsLeftText;
 
     @FXML
     private MenuBar sbMenuBar;
