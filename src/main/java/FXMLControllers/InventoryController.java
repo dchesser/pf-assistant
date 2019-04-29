@@ -6,6 +6,7 @@ import javafx.beans.value.ObservableStringValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.util.Callback;
@@ -13,11 +14,14 @@ import network.cardboard.crystallogic.Inventory;
 import network.cardboard.crystallogic.Item;
 import network.cardboard.crystallogic.PlayerCharacter;
 
+import java.net.URL;
+import java.util.ResourceBundle;
+
 /**
  * Written by David Hagerty
  * Written on 2019-04-28
  */
-public class InventoryController {
+public class InventoryController implements Initializable {
     @FXML
     private TableView<Item> inventoryTable;
 
@@ -25,6 +29,11 @@ public class InventoryController {
 
     public InventoryController(Inventory inventory) {
         this.playerInventory = inventory;
+    }
+
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
         inventoryTable.setItems(FXCollections.observableArrayList(playerInventory.contents));
 
         TableColumn<Item, String> nameColumn = new TableColumn<>("Item Name");
@@ -123,7 +132,5 @@ public class InventoryController {
         valueColumn.setCellValueFactory(param -> param.getValue().value.getValue());
 
         inventoryTable.getColumns().addAll(nameColumn, descriptionColumn, weightColumn, valueColumn);
-
-
     }
 }
