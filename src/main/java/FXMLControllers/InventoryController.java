@@ -94,7 +94,9 @@ public class InventoryController {
 
             }
         });
-        weightColumn.setCellValueFactory(param -> new ObservableValue<>() {
+        // I had to force the ObservableValue<>() to be ObservableValue<Double>()
+        // It didn't compile otherwise. -wbullock
+        weightColumn.setCellValueFactory(param -> new ObservableValue<Double>() {
             @Override
             public void addListener(ChangeListener<? super Double> listener) {
 
@@ -122,7 +124,7 @@ public class InventoryController {
         });
         valueColumn.setCellValueFactory(param -> param.getValue().value.getValue());
 
-        inventoryTable.getColumns().addAll(nameColumn, descriptionColumn, weightColumn, valueColumn);
+        inventoryTable.getColumns().addAll(nameColumn, weightColumn, valueColumn, descriptionColumn);
 
 
     }

@@ -23,16 +23,41 @@ public class Item
 
     public Item(String name, String description, int valueInCP, double weight)
     {
-	this.name = name;
-	this.description = description;
-	this.value = MonetaryValue.inCopper(valueInCP);
-	this.weight = weight;
+        this.name = name;
+        this.description = description;
+        this.value = MonetaryValue.inCopper(valueInCP);
+        this.weight = weight;
+    }
+
+    /**
+     * Constructor: Item(JsonNode)
+     * This constructor takes a JsonNode and parses it.
+     * The parsing process is handled by an internal private method, parseJSON(JsonNode).
+     * @param data
+     */
+    public Item(JsonNode data)
+    {
+        parseJSON(data);
     }
 
     // λ-expressions tend to nag when they don't end in method-calls.
     public double getWeight()
     {
-	return this.weight;
+        return this.weight;
+    }
+
+    /**
+     * Method: parseJSON(JsonNode)
+     * This method takes an object node.
+     * That object node is then broken into the necessary parts to create an item.
+     * @param data
+     */
+    private void parseJSON(JsonNode data)
+    {
+        name = data.getStringValue("name");
+        description = data.getStringValue("description");
+        value = MonetaryValue.inCopper(Integer.parseInt(data.getNumberValue("value")));
+        weight = Double.parseDouble(data.getNumberValue("weight"));
     }
 
     /**

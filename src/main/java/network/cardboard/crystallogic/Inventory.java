@@ -25,9 +25,24 @@ public class Inventory
      * Used to build pre-existing inventories from save file.
      * @param inventoryJSON
      */
-    public Inventory(JsonNode inventoryJSON) {
-
+    public Inventory(JsonNode inventoryJSON)
+    {
+        parseJSON(inventoryJSON);
     }
+
+    /**
+     * Method: parseJSON(JsonNode)
+     * This method takes a JsonArrayNode (the Inventory node) and turns it into the inventory.
+     * There is some abstraction up to the Item object to help lessen the code.
+     * @param jsonData
+     */
+    private void parseJSON(JsonNode jsonData)
+    {
+        jsonData.getArrayNode("inventory").forEach(item -> {
+            addItem(new Item(item));
+        });
+    }
+
     /**
      * Insert an Item into this inventory.
      * @return true if the Item was added to the Inventory.
