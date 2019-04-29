@@ -12,11 +12,22 @@ public class Inventory
     // are relevant to inventories.
     public ArrayList<Item> contents;
 
+    /**
+     * Empty Constructor for new inventories
+     */
     public Inventory()
     {
 	this.contents = new ArrayList<Item>();
     }
 
+    /**
+     * Constructor based on a JSON node.
+     * Used to build pre-existing inventories from save file.
+     * @param inventoryJSON
+     */
+    public Inventory(JsonNode inventoryJSON) {
+
+    }
     /**
      * Insert an Item into this inventory.
      * @return true if the Item was added to the Inventory.
@@ -39,7 +50,7 @@ public class Inventory
      * The amount of items within this Inventory.
      * @return the amount of items in this Inventory.
      */
-    public int itemsContained()
+    public int size()
     {
 	return this.contents.size();
     }
@@ -50,30 +61,24 @@ public class Inventory
      */
     public double totalWeight()
     {
-	return this.contents.stream()
-	    .mapToDouble(i -> i.weight)
-	    .sum();
+        return this.contents.stream()
+            .mapToDouble(i -> i.weight)
+            .sum();
     }
 
     /**
      * Render an Inventory in JSON.
      * @return the JsonNode representing this inventory.
      */
-    public JsonNode toJSON()
+    public JsonArrayNodeBuilder toJSON()
     {
-	JsonArrayNodeBuilder builder = anArrayBuilder();
+        JsonArrayNodeBuilder builder = anArrayBuilder();
 
-	this.contents.stream()
-	    .forEach(item -> {
-		    JsonObjectNodeBuilder jsonItem = anObjectBuilder()
-			.withField("name", aStringBuilder(item.name))
-			.withField("description", aStringBuilder(item.description))
-			.withField("cp_value", aNumberBuilder(item.value.toString()))
-			.withField("weight", aNumberBuilder(new Double(item.weight).toString()));
+        this.contents.stream()
+            .forEach(item -> {
+                builder.withElement(item.toJSON());
+            });
 
-		    builder.withElement(jsonItem);
-		});
-
-	return builder.build();
+        return builder;
     }
 }

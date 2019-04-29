@@ -1,6 +1,11 @@
 package network.cardboard.crystallogic;
 
 import argo.jdom.JsonNode;
+import argo.jdom.JsonObjectNodeBuilder;
+
+import static argo.jdom.JsonNodeBuilders.aNumberBuilder;
+import static argo.jdom.JsonNodeBuilders.aStringBuilder;
+import static argo.jdom.JsonNodeBuilders.anObjectBuilder;
 import static argo.jdom.JsonNodeFactories.*;
 
 /**
@@ -30,11 +35,22 @@ public class Item
 	return this.weight;
     }
 
-    public JsonNode toJSON()
+    /**
+     * Method: toJSON()
+     * This method returns the item as a JsonObjectNodeBuilder,
+     * which can be used to then .build() the json into an object from where it's
+     * being called, or put into a larger json without building first, so that you
+     * can get a larger singular save.
+     * @return
+     */
+    public JsonObjectNodeBuilder toJSON()
     {
-	return object(field("name", string(this.name)),
-		      field("description", string(this.description)),
-		      field("cp_value", number(this.value.toCopper())),
-		      field("weight", number(new Double(this.weight).toString())));
+        JsonObjectNodeBuilder builder = anObjectBuilder();
+
+        builder.withField("name", aStringBuilder(name))
+                .withField("description", aStringBuilder(description))
+                .withField("value", aNumberBuilder("" + value))
+                .withField("weight", aNumberBuilder("" + weight));
+        return builder;
     }
 }
