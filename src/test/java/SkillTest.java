@@ -214,6 +214,7 @@ public class SkillTest {
 					"\"ranks\": \"0\"" +
 				"}" +
 			"]," +
+			"inventory: []" +
 			"}";
 
     @Test

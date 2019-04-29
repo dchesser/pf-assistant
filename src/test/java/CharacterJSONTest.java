@@ -219,6 +219,7 @@ public class CharacterJSONTest {
 					"\"ranks\": \"0\"" +
 				"}" +
 			"]," +
+			"inventory: []" +
 			"}";
 
     private static final JdomParser PARSER = new JdomParser();

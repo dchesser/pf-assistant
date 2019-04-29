@@ -308,7 +308,8 @@ public class PlayerCharacter
                 .withField("copperCoins", aNumberBuilder("" + copperCoins))
                 .withField("otherValuables", aStringBuilder(otherValuables))
                 .withField("currentHealth", aNumberBuilder("" + currHealth))
-                .withField("maxHealth", aNumberBuilder("" + maxHealth));
+                .withField("maxHealth", aNumberBuilder("" + maxHealth))
+                .withField("inventory", inventory.toJSON());
 
         JsonNode json = builder.build();
 
