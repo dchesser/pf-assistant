@@ -241,8 +241,9 @@ public class PlayerCharacter
                     {
                         case "name":
                             gameSkill = PlayerSkill.getGameSkill(field.getValue().getText());
+                            break;
                         case "classSkill":
-                            isClassSkill = Boolean.getBoolean(field.getValue().getText());
+                            isClassSkill = field.getValue().getBooleanValue();
                             break;
                         case "ranks":
                             ranks = Integer.parseInt(field.getValue().getText());

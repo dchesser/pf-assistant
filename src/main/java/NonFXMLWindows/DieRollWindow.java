@@ -83,7 +83,8 @@ public class DieRollWindow
 
 		reRoll.setOnAction(event ->
 		{
-			this.result.setText("" + (((dieType.roll() + individualModifier) * quantity )+ totalModifier));
+			int rollResult = dieType.roll();
+			this.result.setText("( (" + rollResult + " + " + individualModifier + ") * " + quantity + ") + " + totalModifier + ": " +  (((rollResult + individualModifier) * quantity )+ totalModifier));
 		});
 
 		VBox root = new VBox();
@@ -91,7 +92,10 @@ public class DieRollWindow
 		root.getChildren().addAll(this.result, reRoll);
 
 		// display first roll
-		this.result.setText("" + (((dieType.roll() + individualModifier) * quantity )+ totalModifier));
+
+		int rollResult = dieType.roll();
+
+		this.result.setText("( (" + rollResult + " + " + individualModifier + ") * " + quantity + ") + " + totalModifier + ": " +  (((rollResult + individualModifier) * quantity )+ totalModifier));
 
 		Scene scene = new Scene(root, 250, 200);
 		Stage stage = new Stage();
