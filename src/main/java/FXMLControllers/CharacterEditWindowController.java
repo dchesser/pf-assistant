@@ -347,6 +347,11 @@ public class CharacterEditWindowController
             inventoryController.setInventory(inv);
 
             inventoryAnchorPane.getChildren().add(root);
+            AnchorPane.setTopAnchor(root, 50.0);
+            AnchorPane.setBottomAnchor(root, 0.0);
+            AnchorPane.setLeftAnchor(root, 0.0);
+            AnchorPane.setRightAnchor(root, 0.0);
+
         }
         catch (IOException i)
         {
