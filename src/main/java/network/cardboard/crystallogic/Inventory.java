@@ -1,6 +1,8 @@
 package network.cardboard.crystallogic;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import argo.jdom.JsonNode;
 import argo.jdom.JsonArrayNodeBuilder;
 import argo.jdom.JsonObjectNodeBuilder;
@@ -25,20 +27,20 @@ public class Inventory
      * Used to build pre-existing inventories from save file.
      * @param inventoryJSON
      */
-    public Inventory(JsonNode inventoryJSON)
+    public Inventory(List<JsonNode> inventoryJSON)
     {
         parseJSON(inventoryJSON);
     }
 
     /**
-     * Method: parseJSON(JsonNode)
+     * Method: parseJSON(List(JsonNode))
      * This method takes a JsonArrayNode (the Inventory node) and turns it into the inventory.
      * There is some abstraction up to the Item object to help lessen the code.
      * @param jsonData
      */
-    private void parseJSON(JsonNode jsonData)
+    private void parseJSON(List<JsonNode> jsonData)
     {
-        jsonData.getArrayNode("inventory").forEach(item -> {
+        jsonData.forEach(item -> {
             addItem(new Item(item));
         });
     }

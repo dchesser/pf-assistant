@@ -215,11 +215,11 @@ public class PlayerCharacter
         if(!node.isNode("skills"))
         {
             skillSet = PlayerSkill.skillList();
-        } else {
+        }
+        else {
 
             skillSet = new HashMap<>();
 
-            // Figure out wtf to do with the saved skillSet
             List<JsonNode> skills = node.getArrayNode("skills");
 
             GameSkill gameSkill = null;
@@ -252,6 +252,15 @@ public class PlayerCharacter
                 playerSkill = new PlayerSkill(gameSkill, ranks, isClassSkill);
                 skillSet.put(gameSkill, playerSkill);
             }
+        }
+
+        // Set the Inventory
+        if(!node.isArrayNode("inventory"))
+        {
+            inventory = new Inventory();
+        }
+        else {
+            inventory = new Inventory(node.getArrayNode("inventory"));
         }
     }
 
